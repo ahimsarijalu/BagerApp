@@ -12,7 +12,7 @@ export default function App() {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
+        <Stack.Navigator initialRouteName="login">
           <Stack.Screen
             name="signup"
             component={SignupScreen}
