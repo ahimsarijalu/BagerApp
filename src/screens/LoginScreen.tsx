@@ -76,7 +76,7 @@ const LoginScreen = () => {
           Don't Have an Account?{" "}
           <Text
             style={[styles.registerText]}
-            onPress={() => navigation.navigate("signup")}
+            // onPress={() => navigation.navigate("signup")}
           >
             Register Now
           </Text>

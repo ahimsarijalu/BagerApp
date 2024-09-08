@@ -1,12 +1,5 @@
 import React from "react";
 import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
-import orang from "../../assets/HomeOrang.png";
-import medali from "../../assets/juara.png";
-import home from "../../assets/HomeScreen.png";
-import start from "../../assets/start.png";
-import penjelasan1 from "../../assets/Penjelasan1.png";
-import penjelasan2 from "../../assets/Penjelasan2.png";
-import penjelasan3 from "../../assets/Penjelasan3.png";
 
 const HomeScreen = () => {
   return (
@@ -15,27 +8,27 @@ const HomeScreen = () => {
         <Text> Hallo! Selamat Bermain</Text>
 
         <View style={styles.barisSatu}>
-          <Image source={orang}></Image>
+          <Image source={require('assets/HomeOrang.png')}></Image>
           <View style={styles.barisSatuTengah}>
             <Text>Prima Gaul</Text>
             <Text>100 points</Text>
           </View>
 
-          <Image source={medali}></Image>
+          <Image source={require('assets/juara.png')}></Image>
         </View>
       </View>
 
       <View style={styles.imageHome}>
         <ScrollView style={styles.forScrollView} horizontal={true}>
-          <Image style={styles.forPenjelasan} source={home}></Image>
-          <Image style={styles.forPenjelasan} source={penjelasan1}></Image>
-          <Image style={styles.forPenjelasan} source={penjelasan2}></Image>
-          <Image style={styles.forPenjelasan} source={penjelasan3}></Image>
+          <Image style={styles.forPenjelasan} source={require('assets/HomeScreen.png')}></Image>
+          <Image style={styles.forPenjelasan} source={require('assets/Penjelasan1.png')}></Image>
+          <Image style={styles.forPenjelasan} source={require('assets/Penjelasan2.png')}></Image>
+          <Image style={styles.forPenjelasan} source={require('assets/Penjelasan3.png')}></Image>
         </ScrollView>
       </View>
 
       <View style={styles.imageStart}>
-        <Image source={start}></Image>
+        <Image source={require('assets/HomeScreen.png')}></Image>
       </View>
     </View>
   );
