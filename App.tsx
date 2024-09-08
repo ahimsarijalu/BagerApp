@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import React from "react";
 import { store } from "./src/redux/store";
 import SignupScreen from "@/screens/SignupScreen";
+import HomeScreen from "@/screens/HomeScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -14,7 +15,7 @@ export default function App() {
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen
             name="signup"
-            component={SignupScreen}
+            component={HomeScreen}
             options={{ headerTitle: "Sign Up" }}
           ></Stack.Screen>
         </Stack.Navigator>
