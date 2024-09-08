@@ -65,8 +65,7 @@ import React from "react";
           onPress={() => setSecurePassword(!securePassword)}
           style={styles.eyeIcon}>
             
-          {/* Add eye icon logic here */}
-          {/* <Text>👁</Text> */}
+          
           <Ionicons name='eye-outline' size={24}/>
         </TouchableOpacity>
       </View>
@@ -82,7 +81,7 @@ import React from "react";
         <TouchableOpacity
           onPress={() => setSecureConfirmPassword(!secureConfirmPassword)}
           style={styles.eyeIcon}>
-          {/* Add eye icon logic here */}
+          
           <Ionicons name='eye-outline' size={24}/>
         </TouchableOpacity>
       </View>
