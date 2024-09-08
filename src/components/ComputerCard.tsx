@@ -1,25 +1,25 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { Component } from "react";
+import {  StyleSheet, } from "react-native";
+import React from "react";
+import { Card } from "react-native-paper";
 
-export class ComputerCard extends Component {
-  render() {
-    return (
-      <View style={styles.card}>
-        <Text>computer</Text>
-      </View>
-    );
-  }
-}
+const ComputerCard = () => {
+  return (
+    <Card style={styles.card}>
+      <Card.Cover
+        style={{ height: "100%", borderRadius: 10 }}
+        resizeMode="cover"
+        source={require("@/img/computer-bg.png")}
+      />
+    </Card>
+  );
+};
 
 export default ComputerCard;
 
 const styles = StyleSheet.create({
   card: {
-    margin: 12,
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderRadius: 20,
+    marginHorizontal: 8,
+    marginVertical: 24,
   },
 });
