@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Image, TouchableOpacity, TextInput, Text} from "react-native";
-import FotoProfile from "../../assets/profilefoto.png";
-import ButtonFotoProfile from "../../assets/buttonfotoprofile.png"
-import SaveChange from "../../assets/savechange.png"
-import LogOut from "../../assets/logout.png"
+import SaveChange from "../../"
+import LogOut from "../../"
 
 const ProfileScreen = () => {
     const [username, setUsername] = useState('');
@@ -15,10 +13,10 @@ const ProfileScreen = () => {
         <View style={styles.container}>
             <View style={styles.FotoProfile}>
                 <View>
-                    <Image source={FotoProfile} style={{alignSelf: 'center'}}></Image>
+                    <Image source={require('assets/profilefoto.png')} style={{alignSelf: 'center'}}></Image>
                     <View>
                         <TouchableOpacity>
-                            <Image source={ButtonFotoProfile} style={{bottom: -15}}></Image>
+                            <Image source={require('assets/buttonfotoprofile.png')} style={{bottom: -15}}></Image>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -51,14 +49,14 @@ const ProfileScreen = () => {
 
                 <View>
                     <TouchableOpacity>
-                        <Image source={SaveChange}></Image>
+                        <Image source={require('assets/savechange.png')}></Image>
                     </TouchableOpacity>
                 </View>
             </View>
 
             <View style={styles.kolomlogout}>
                 <TouchableOpacity style={{left: -95}}>
-                    <Image source={LogOut}></Image>
+                    <Image source={require('assets/logout.png')}></Image>
                 </TouchableOpacity>
             </View>
         </View>
