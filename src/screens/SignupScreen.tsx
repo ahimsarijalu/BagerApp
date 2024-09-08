@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState } from 'react';
 import {
   View,
@@ -22,13 +21,8 @@ const SignupScreen: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [securePassword, setSecurePassword] = useState(true);
   const [secureConfirmPassword, setSecureConfirmPassword] = useState(true);
-=======
-import { Image, StyleSheet, Text, View } from "react-native";
-import React from "react";
->>>>>>> c2c146a6f4bbe16e4aef7cccbc4705ca4fd0b62f
 
   return (
-<<<<<<< HEAD
     <ScrollView contentContainerStyle={styles.container}>
       <Image style={{alignSelf:"center", top:-10}} source={img1}></Image>
       <View style={{backgroundColor:"white", padding:50, width:400, marginLeft:-20, borderTopRightRadius:15, borderTopLeftRadius:15, height:642}}>
@@ -101,17 +95,11 @@ import React from "react";
 
       
     </ScrollView>
-=======
-    <View style={styles.container}>
-      <Text>aaa</Text>
-    </View>
->>>>>>> c2c146a6f4bbe16e4aef7cccbc4705ca4fd0b62f
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-<<<<<<< HEAD
     flexGrow: 1,
     backgroundColor: '#5BD1DE',
     // padding: 20,
@@ -195,14 +183,3 @@ const styles = StyleSheet.create({
 });
 
 export default SignupScreen;
-=======
-    flex: 1,
-    flexGrow: 1,
-    justifyContent: "center",
-    backgroundColor: "#5bd1de",
-    alignSelf: "stretch",
-  },
-});
-
-export default SignupScreen;
->>>>>>> c2c146a6f4bbe16e4aef7cccbc4705ca4fd0b62f
