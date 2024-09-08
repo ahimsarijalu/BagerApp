@@ -8,7 +8,7 @@ const ComputerCard = () => {
       <Card.Cover
         style={{ height: "100%", borderRadius: 10 }}
         resizeMode="cover"
-        source={require("@/img/computer-bg.png")}
+        source={require("assets/computer-bg.png")}
       />
     </Card>
   );

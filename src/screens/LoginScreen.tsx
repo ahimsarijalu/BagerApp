@@ -18,8 +18,8 @@ const LoginScreen = () => {
     <View style={styles.container}>
       {/* Gambar Atas */}
       <View style={styles.header}>
-        <Image source={require("@/img/image_25.png")} style={styles.topImage} />
-        <Image source={require("@/img/bagerlogin.png")} />
+        <Image source={require("assets/image_25.png")} style={styles.topImage} />
+        <Image source={require("assets/bagerlogin.png")} />
       </View>
 
       {/* Login */}
@@ -63,7 +63,7 @@ const LoginScreen = () => {
           >
             <Image
               style={styles.googleIcon}
-              source={require("@/img/image_29.png")}
+              source={require("assets/image_29.png")}
             />
           </TouchableOpacity>
         </View>
