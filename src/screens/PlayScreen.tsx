@@ -10,22 +10,21 @@ const PlayScreen = () => {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#F5FCFF",
       }}
     >
-      <View style={{ flex: 1, backgroundColor: "green", flexDirection: "row" }}>
-        <View style={{ flex: 3 }}>
+      <View style={{ flex: 1, flexDirection: "row" }}>
+        <View style={styles.card}>
           <ComputerCard />
         </View>
-        <View style={{ flex: 3 }}>
+        <View style={styles.card}>
           <ComputerCard />
         </View>
-        <View style={{ flex: 3 }}>
+        <View style={styles.card}>
           <ComputerCard />
         </View>
       </View>
       <View
-        style={{ flex: 1, backgroundColor: "yellow", flexDirection: "row" }}
+        style={{ flex: 1, flexDirection: "row" }}
       >
         <View style={{ flex: 3 }}>
           <Text>hello world 1</Text>
@@ -37,9 +36,7 @@ const PlayScreen = () => {
           <Text>hello world 3</Text>
         </View>
       </View>
-      <View
-        style={{ flex: 1, backgroundColor: "yellow", flexDirection: "row" }}
-      >
+      <View style={{ flex: 1, flexDirection: "row" }}>
         <View style={{ flex: 3 }}>
           <PlayerCard />
         </View>
@@ -56,4 +53,8 @@ const PlayScreen = () => {
 
 export default PlayScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  card: {
+    flex: 1,
+  },
+});

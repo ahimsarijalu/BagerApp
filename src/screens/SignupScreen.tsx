@@ -59,8 +59,7 @@ const SignupScreen: React.FC = () => {
           onPress={() => setSecurePassword(!securePassword)}
           style={styles.eyeIcon}>
             
-          {/* Add eye icon logic here */}
-          {/* <Text>👁</Text> */}
+          
           <Ionicons name='eye-outline' size={24}/>
         </TouchableOpacity>
       </View>
@@ -76,7 +75,7 @@ const SignupScreen: React.FC = () => {
         <TouchableOpacity
           onPress={() => setSecureConfirmPassword(!secureConfirmPassword)}
           style={styles.eyeIcon}>
-          {/* Add eye icon logic here */}
+          
           <Ionicons name='eye-outline' size={24}/>
         </TouchableOpacity>
       </View>
