@@ -9,6 +9,8 @@ const ProfileScreen = () => {
 
     return (
         <View style={styles.container}>
+
+            //Profile Foto dan Button Foto Profile
             <View style={styles.FotoProfile}>
                 <View>
                     <Image source={require('assets/profilefoto.png')} style={{alignSelf: 'center'}}></Image>
@@ -19,14 +21,18 @@ const ProfileScreen = () => {
                     </View>
                 </View>
             </View>
-
+        
+            /*
+            Input Text Untuk Username, Email, Password, 
+            dan Confirm Password
+            */
             <View style={styles.kolominput}>
                 <Text style={{fontWeight:"bold", marginBottom:8}}>Username</Text>
                 <TextInput
                 style={styles.input}
                 onChangeText={setUsername}
                 />
-
+                
                 <Text style={{fontWeight:"bold", marginBottom:8}}>Email</Text>
                 <TextInput
                 style={styles.input}
@@ -52,14 +58,19 @@ const ProfileScreen = () => {
                 </View>
             </View>
 
+            //Button Log Out
             <View style={styles.kolomlogout}>
                 <TouchableOpacity style={{left: -95}}>
                     <Image source={require('assets/logout.png')}></Image>
                 </TouchableOpacity>
             </View>
+
         </View>
     )
 }
+
+
+
 
 const styles = StyleSheet.create({
     container: {
