@@ -4,9 +4,9 @@ import { Provider } from "react-redux";
 import React from "react";
 import { store } from "./src/redux/store";
 import SignupScreen from "@/screens/SignupScreen";
-import LoginScreen from "./src/screens/LoginScreen";
-import PlayScreen from "@/screens/PlayScreen";
+import LoginScreen from "@/screens/LoginScreen";
 import HomeScreen from "@/screens/HomeScreen";
+import PlayScreen from "@/screens/PlayScreen";
 
 const Stack = createNativeStackNavigator();
 
