@@ -8,9 +8,6 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 
-import bagerHands from "../img/image 25.png";
-import bagerLogin from "../img/bagerlogin.png";
-import google from "../img/image 29.png";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
@@ -21,8 +18,8 @@ const LoginScreen = () => {
     <View style={styles.container}>
       {/* Gambar Atas */}
       <View style={styles.header}>
-        <Image source={bagerHands} style={styles.topImage} />
-        <Image source={bagerLogin} />
+        <Image source={require("@/img/image_25.png")} style={styles.topImage} />
+        <Image source={require("@/img/bagerlogin.png")} />
       </View>
 
       {/* Login */}
@@ -47,10 +44,14 @@ const LoginScreen = () => {
           />
           <TouchableOpacity
             onPress={() => {
-              setPasswordVisible(!passwordVisible)
+              setPasswordVisible(!passwordVisible);
             }}
           >
-            <Ionicons name={passwordVisible ? "eye-outline" : "eye-off-outline"} size={24} color="#888" />
+            <Ionicons
+              name={passwordVisible ? "eye-outline" : "eye-off-outline"}
+              size={24}
+              color="#888"
+            />
           </TouchableOpacity>
         </View>
 
@@ -60,7 +61,10 @@ const LoginScreen = () => {
               alert("tsx");
             }}
           >
-            <Image style={styles.googleIcon} source={google} />
+            <Image
+              style={styles.googleIcon}
+              source={require("@/img/image_29.png")}
+            />
           </TouchableOpacity>
         </View>
 

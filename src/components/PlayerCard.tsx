@@ -6,7 +6,7 @@ export default function PlayerCard() {
   return (
     <Pressable onPress={() => console.log("pressed")}>
       <Card style={styles.card}>
-        <Card.Cover source={require("@/img/computer-card-bg.png")} />
+        <Card.Cover source={require("@/img/computer-bg.png")} />
         <Card style={styles.button} mode="contained">
           <Card.Content>
             <Text style={{ color: "white", fontWeight: "bold", fontSize: 16 }}>

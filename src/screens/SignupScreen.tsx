@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState } from 'react';
 import {
   View,
@@ -9,9 +8,6 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-import img1 from "../../assets/img1.png";
-import img2 from "../../assets/img2.png";
-import img3 from "../../assets/img3.png";
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 
@@ -22,17 +18,12 @@ const SignupScreen: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [securePassword, setSecurePassword] = useState(true);
   const [secureConfirmPassword, setSecureConfirmPassword] = useState(true);
-=======
-import { Image, StyleSheet, Text, View } from "react-native";
-import React from "react";
->>>>>>> c2c146a6f4bbe16e4aef7cccbc4705ca4fd0b62f
 
   return (
-<<<<<<< HEAD
     <ScrollView contentContainerStyle={styles.container}>
-      <Image style={{alignSelf:"center", top:-10}} source={img1}></Image>
+      <Image style={{alignSelf:"center", top:-10}} source={require('assets/img1.png')}></Image>
       <View style={{backgroundColor:"white", padding:50, width:400, marginLeft:-20, borderTopRightRadius:15, borderTopLeftRadius:15, height:642}}>
-        <Image style={{ left:-20, top:-30}} source={img2}></Image>
+        <Image style={{ left:-20, top:-30}} source={require('assets/img2.png')}></Image>
         {/* <Image style={{ top: -15, height:76, width:342}} source={img3}></Image> */}
         <Text style={{fontSize:22, fontWeight:'bold', marginTop:-15, marginLeft:-10}}>Join the battle!</Text>
         <Text style={{fontSize:18, fontWeight:'thin', paddingTop:5, marginLeft:-10, marginBottom:30}}>Create your account now and dive into the classic game of strategy and luck. </Text>
@@ -100,17 +91,11 @@ import React from "react";
 
       
     </ScrollView>
-=======
-    <View style={styles.container}>
-      <Text>aaa</Text>
-    </View>
->>>>>>> c2c146a6f4bbe16e4aef7cccbc4705ca4fd0b62f
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-<<<<<<< HEAD
     flexGrow: 1,
     backgroundColor: '#5BD1DE',
     // padding: 20,
@@ -194,14 +179,3 @@ const styles = StyleSheet.create({
 });
 
 export default SignupScreen;
-=======
-    flex: 1,
-    flexGrow: 1,
-    justifyContent: "center",
-    backgroundColor: "#5bd1de",
-    alignSelf: "stretch",
-  },
-});
-
-export default SignupScreen;
->>>>>>> c2c146a6f4bbe16e4aef7cccbc4705ca4fd0b62f
