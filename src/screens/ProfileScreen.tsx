@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Image, TouchableOpacity, TextInput, Text} from "react-native";
-import SaveChange from "../../"
-import LogOut from "../../"
 
 const ProfileScreen = () => {
     const [username, setUsername] = useState('');
