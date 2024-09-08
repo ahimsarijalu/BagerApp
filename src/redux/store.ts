@@ -1,7 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
+import leaderboardReducer from './leaderboardSlice';
 
 export const store = configureStore({
-  reducer: {}
+  reducer: {
+    leaderboard: leaderboardReducer,
+  }
 })
 
 // Infer the `RootState`,  `AppDispatch`, and `AppStore` types from the store itself
