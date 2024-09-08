@@ -5,6 +5,7 @@ import React from "react";
 import { store } from "./src/redux/store";
 import SignupScreen from "@/screens/SignupScreen";
 import SplashScreen from "@/screens/SplashScreen";
+import LoginScreen from "@/screens/LoginScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -12,10 +13,15 @@ export default function App() {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
+        <Stack.Navigator initialRouteName="Login">
+          <Stack.Screen
+            name="login"
+            component={LoginScreen}
+            options={{ headerShown: false }}
+          ></Stack.Screen>
           <Stack.Screen
             name="signup"
-            component={SplashScreen}
+            component={SignupScreen}
             options={{ headerShown: false }}
           ></Stack.Screen>
         </Stack.Navigator>
