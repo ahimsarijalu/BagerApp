@@ -5,15 +5,38 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  KeyboardAvoidingView,
 } from "react-native";
-import React, { useState } from "react";
-
+import React, { useEffect, useState } from "react";
+import { Keyboard } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+
 import Ionicons from "@expo/vector-icons/Ionicons";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 
 const LoginScreen = () => {
   const navigation = useNavigation();
+  const translateY = useSharedValue(0);
+  const [tapped, setTapped] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [{ translateY: !tapped? withTiming(translateY.value + 0) : withTiming(translateY.value - 200)}],
+  }));
+
+  useEffect(() => {
+    const upp = Keyboard.addListener('keyboardDidShow', () => {
+      setTapped(true)
+    });
+    const down = Keyboard.addListener('keyboardDidHide', () => {
+      setTapped(false)
+    });
+    return () => {
+      upp.remove();
+      down.remove();
+    }
+  })
+
   return (
     <View style={styles.container}>
       {/* Gambar Atas */}
@@ -23,65 +46,65 @@ const LoginScreen = () => {
       </View>
 
       {/* Login */}
-      <View style={styles.formContainer}>
-        <Text style={styles.formTitle}>Welcome Back Challenger</Text>
-        <Text style={styles.formSubtitle}>
-          Log in and get back into the game to prove you're the ultimate
-          Rock-Paper-Scissors Champion!
-        </Text>
-
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          keyboardType="email-address"
-        />
-
-        <View style={styles.passwordContainer}>
-          <TextInput
-            secureTextEntry={!passwordVisible}
-            style={styles.inputPassword}
-            placeholder="Password"
-          />
-          <TouchableOpacity
-            onPress={() => {
-              setPasswordVisible(!passwordVisible);
-            }}
-          >
-            <Ionicons
-              name={passwordVisible ? "eye-outline" : "eye-off-outline"}
-              size={24}
-              color="#888"
-            />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.googleContainer}>
-          <TouchableOpacity
-            onPress={() => {
-              alert("tsx");
-            }}
-          >
-            <Image
-              style={styles.googleIcon}
-              source={require("assets/image_29.png")}
-            />
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.footerText}>
-          Don't Have an Account?{" "}
-          <Text
-            style={[styles.registerText]}
-            // onPress={() => navigation.navigate("signup")}
-          >
-            Register Now
+        <Animated.View style={[styles.formContainer, animatedStyles]}>
+          <Text style={styles.formTitle}>Welcome Back Challenger</Text>
+          <Text style={styles.formSubtitle}>
+            Log in and get back into the game to prove you're the ultimate
+            Rock-Paper-Scissors Champion!
           </Text>
-        </Text>
-      </View>
+
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            keyboardType="email-address"
+          />
+
+          <View style={styles.passwordContainer}>
+            <TextInput
+              secureTextEntry={!passwordVisible}
+              style={styles.inputPassword}
+              placeholder="Password"
+            />
+            <TouchableOpacity
+              onPress={() => {
+                setPasswordVisible(!passwordVisible);
+              }}
+            >
+              <Ionicons
+                name={passwordVisible ? "eye-outline" : "eye-off-outline"}
+                size={24}
+                color="#888"
+              />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.googleContainer}>
+            <TouchableOpacity
+              onPress={() => {
+                alert("tsx");
+              }}
+            >
+              <Image
+                style={styles.googleIcon}
+                source={require("assets/image_29.png")}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+
+          <Text style={styles.footerText}>
+            Don't Have an Account?{" "}
+            <Text
+              style={[styles.registerText]}
+              // onPress={() => navigation.navigate("signup")}
+            >
+              Register Now
+            </Text>
+          </Text>
+        </Animated.View>
     </View>
   );
 };
@@ -114,6 +137,16 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     paddingVertical: 20,
     paddingHorizontal: 20,
+    // bottom:200
+  },
+  formContainerUpper: {
+    flex: 1,
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    bottom:200,
   },
   formTitle: {
     fontSize: 22,
