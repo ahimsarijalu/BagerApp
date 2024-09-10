@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,11 +7,17 @@ import {
   StyleSheet,
   ScrollView,
   Image,
+  Dimensions,
+  Keyboard,
+  Platform,
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 
 const SignupScreen: React.FC = () => {
+  const translateY = useSharedValue(0);
+  const [tapped, setTapped] = useState(false);
+
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,12 +25,30 @@ const SignupScreen: React.FC = () => {
   const [securePassword, setSecurePassword] = useState(true);
   const [secureConfirmPassword, setSecureConfirmPassword] = useState(true);
 
+  const Dimen = Dimensions.get("screen"); 
+  
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [{ translateY: !tapped? withTiming(translateY.value + 0) : withTiming( translateY.value - 200)}],
+  }));
+
+  useEffect(() => {
+    const upp = Keyboard.addListener('keyboardDidShow', () => {
+      setTapped(true)
+    });
+    const down = Keyboard.addListener('keyboardDidHide', () => {
+      setTapped(false)
+    });
+    return () => {
+      upp.remove();
+      down.remove();
+    }
+  })
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image style={{alignSelf:"center", top:-10}} source={require('assets/img1.png')}></Image>
-      <View style={{backgroundColor:"white", padding:50, width:400, marginLeft:-20, borderTopRightRadius:15, borderTopLeftRadius:15, height:642}}>
+      <Animated.View style={[{backgroundColor:"white", padding:50, width:420, alignSelf: "stretch", marginLeft:-20, borderRadius:15, height:642}, animatedStyles]}>
         <Image style={{ left:-20, top:-30}} source={require('assets/img2.png')}></Image>
-        {/* <Image style={{ top: -15, height:76, width:342}} source={img3}></Image> */}
         <Text style={{fontSize:22, fontWeight:'bold', marginTop:-15, marginLeft:-10}}>Join the battle!</Text>
         <Text style={{fontSize:18, fontWeight:'thin', paddingTop:5, marginLeft:-10, marginBottom:30}}>Create your account now and dive into the classic game of strategy and luck. </Text>
 
@@ -87,7 +111,7 @@ const SignupScreen: React.FC = () => {
         </Text>
       </TouchableOpacity>
 
-      </View>
+      </Animated.View>
 
       
     </ScrollView>

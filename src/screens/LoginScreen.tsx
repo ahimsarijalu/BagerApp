@@ -6,6 +6,8 @@ import {
   Image,
   StyleSheet,
   KeyboardAvoidingView,
+  Dimensions,
+  Platform,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Keyboard } from "react-native";
@@ -19,9 +21,10 @@ const LoginScreen = () => {
   const translateY = useSharedValue(0);
   const [tapped, setTapped] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
-
+  const Dimen = Dimensions.get("screen"); 
+  
   const animatedStyles = useAnimatedStyle(() => ({
-    transform: [{ translateY: !tapped? withTiming(translateY.value + 0) : withTiming(translateY.value - 200)}],
+    transform: [{ translateY: !tapped? withTiming(translateY.value + 0) : withTiming( (Platform.OS === "ios" ? 0-(Dimen.height/4) : 0))}],
   }));
 
   useEffect(() => {
@@ -99,7 +102,7 @@ const LoginScreen = () => {
             Don't Have an Account?{" "}
             <Text
               style={[styles.registerText]}
-              // onPress={() => navigation.navigate("signup")}
+              onPress={() => navigation.navigate("signup")}
             >
               Register Now
             </Text>
