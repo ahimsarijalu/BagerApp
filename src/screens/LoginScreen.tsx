@@ -8,9 +8,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Dimensions,
+  Keyboard
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Keyboard, Dimensions } from "react-native";
 const { width, height } = Dimensions.get("window");
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -21,7 +22,8 @@ const LoginScreen = () => {
   const translateY = useSharedValue(0);
   const [tapped, setTapped] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
-
+  const Dimen = Dimensions.get("screen"); 
+  
   const animatedStyles = useAnimatedStyle(() => ({
     transform: [
       {
@@ -108,7 +110,7 @@ const LoginScreen = () => {
           <Text style={styles.footerText}>
             Don't Have an Account?{" "}
             <Text
-              style={styles.registerText}
+              style={[styles.registerText]}
             >
               Register Now
             </Text>

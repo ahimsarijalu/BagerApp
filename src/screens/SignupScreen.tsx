@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,11 +7,20 @@ import {
   StyleSheet,
   ScrollView,
   Image,
+  Dimensions,
+  Keyboard,
+  Platform,
+  Alert,
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
+import { useNavigation } from '@react-navigation/native';
 
 const SignupScreen: React.FC = () => {
+  const navigation = useNavigation();
+  const translateY = useSharedValue(0);
+  const [tapped, setTapped] = useState(false);
+
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,15 +28,36 @@ const SignupScreen: React.FC = () => {
   const [securePassword, setSecurePassword] = useState(true);
   const [secureConfirmPassword, setSecureConfirmPassword] = useState(true);
 
+  const Dimen = Dimensions.get("screen"); 
+  
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [{ translateY: !tapped? withTiming(translateY.value + 0) : withTiming( translateY.value - 160)}],
+  }));
+
+  useEffect(() => {
+    const upp = Keyboard.addListener('keyboardDidShow', () => {
+      setTapped(true)
+    });
+    const down = Keyboard.addListener('keyboardDidHide', () => {
+      setTapped(false)
+    });
+    return () => {
+      upp.remove();
+      down.remove();
+    }
+  })
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
+      
       <Image style={{alignSelf:"center", top:-10}} source={require('assets/img1.png')}></Image>
-      <View style={{backgroundColor:"white", padding:50, width:400, marginLeft:-20, borderTopRightRadius:15, borderTopLeftRadius:15, height:642}}>
-        <Image style={{ left:-20, top:-30}} source={require('assets/img2.png')}></Image>
-        {/* <Image style={{ top: -15, height:76, width:342}} source={img3}></Image> */}
+
+      <Animated.View style={[{backgroundColor:"white", padding:50, width:420, alignSelf: "stretch", marginLeft:-20, borderRadius:28, height:942}, animatedStyles]}>
+        <TouchableOpacity onPress={() => {navigation.goBack()}}>
+          <Image style={{ left:-20, top:-30}} source={require('assets/img2.png')}></Image>
+        </TouchableOpacity>
         <Text style={{fontSize:22, fontWeight:'bold', marginTop:-15, marginLeft:-10}}>Join the battle!</Text>
         <Text style={{fontSize:18, fontWeight:'thin', paddingTop:5, marginLeft:-10, marginBottom:30}}>Create your account now and dive into the classic game of strategy and luck. </Text>
-
 
       <TextInput
         placeholder="Username"
@@ -78,16 +108,16 @@ const SignupScreen: React.FC = () => {
       </View>
 
       <TouchableOpacity style={styles.registerButton}>
-        <Text style={styles.registerButtonText}>Register</Text>
+        <Text style={styles.registerButtonText}>Register Now!</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity>
+      {/* <TouchableOpacity>
         <Text style={styles.loginText}>
         Already Have an Account? <Text style={styles.loginLink}>Login Now</Text>
         </Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
-      </View>
+      </Animated.View>
 
       
     </ScrollView>
@@ -154,8 +184,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   registerButton: {
-    marginTop: 70,
-    backgroundColor: '#00C2FF',
+    marginTop: 50,
+    backgroundColor: '#44c9e0',
     height: 48,
     borderRadius: 8,
     justifyContent: 'center',
