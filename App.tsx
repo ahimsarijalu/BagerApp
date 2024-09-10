@@ -7,7 +7,6 @@ import SignupScreen from "@/screens/SignupScreen";
 import LoginScreen from "@/screens/LoginScreen";
 import HomeScreen from "@/screens/HomeScreen";
 import PlayScreen from "@/screens/PlayScreen";
-import BottomSheetComponent from "@/screens/TestingBottomSheet";
 
 const Stack = createNativeStackNavigator();
 
