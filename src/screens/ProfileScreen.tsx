@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Image, Text, TouchableOpacity, TextInput} from "react-native";
-import { Header, Input} from 'react-native-elements';
-import { Title } from 'react-native-paper';
+import { View, Image, Text, TouchableOpacity, TextInput, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 const ProfileScreen = () => {
@@ -12,166 +10,193 @@ const ProfileScreen = () => {
     const [passwordVisible, setPasswordVisible] = useState(false); 
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);  
 
-
     return (
-        <View style={styles.container}>
-            {/* Back Button, Title Profile, Foto Profile dan Change Foto Profile */}
-            <View style={styles.BackButton}>
-                <TouchableOpacity>
-                    <Image source={require('assets/backbuttonprofilescreen.png')}></Image>
-                </TouchableOpacity>
-            </View>
-
-            <View>
-                <Text style={{fontWeight: 'bold', fontSize: 18, bottom: -10}}>Profile</Text>
-            </View>
-
-            <View style={styles.FotoProfile}>
-                <View>
-                    <Image source={require('assets/profilefoto.png')} style={{alignSelf: 'center'}}></Image>
-                    <View>
-                        <TouchableOpacity>
-                            <Image source={require('assets/buttonfotoprofile.png')} style={{bottom: -15}}></Image>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </View>
-        
-            <View style={styles.kolominput}>
-                <Text style={{fontWeight:"bold", marginBottom:8}}>Username</Text>
-                <TextInput
-                style={styles.input}
-                onChangeText={setUsername}
-                />
-                
-                <Text style={{fontWeight:"bold", marginBottom:8}}>Email</Text>
-                <TextInput
-                style={styles.input}
-                onChangeText={setEmail}
-                />
-                
-                <Text style={{fontWeight:"bold", marginBottom:8}}>Password</Text>
-                <View style={styles.passwordContainer}>
-                <TextInput
-                style={styles.input}
-                onChangeText={setPassword}
-                secureTextEntry={!passwordVisible}
-                ></TextInput>
-                <TouchableOpacity
-                style={{bottom:-12, left:-35}}
-                onPress={() => {
-                setPasswordVisible(!passwordVisible);
-                }}
-                >
-                <Ionicons
-                name={passwordVisible ? "eye-outline" : "eye-off-outline"}
-                size={24}
-                color="#888"
-                />
-                </TouchableOpacity>
-                </View>
-
-                <Text style={{fontWeight:"bold", marginBottom:8}}>Confirm Password</Text>
-                <View style={styles.confirmPasswordContainer}>
-                <TextInput
-                style={styles.input}
-                onChangeText={setConfirmPassword}
-                secureTextEntry={!confirmPasswordVisible}
-                ></TextInput>
-                <TouchableOpacity
-                style={{bottom:-12, left:-35}}
-                onPress={() => {
-                setConfirmPasswordVisible(!confirmPasswordVisible);
-                }}
-                >
-                <Ionicons
-                name={confirmPasswordVisible ? "eye-outline" : "eye-off-outline"}
-                size={24}
-                color="#888"
-                />
-                </TouchableOpacity>
-                </View>
-
-                <View>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.container}
+        >
+            <ScrollView contentContainerStyle={styles.scrollView}>
+                {/* Back Button */}
+                <View style={styles.backButton}>
                     <TouchableOpacity>
-                        <Image source={require('assets/savechange.png')} style={{left: 85, bottom: -18}}></Image>
+                        <Image source={require('assets/backbuttonprofilescreen.png')} />
                     </TouchableOpacity>
                 </View>
-            </View>
 
-            <View style={styles.kolomlogout}>
-                <TouchableOpacity style={{left: -95}}>
-                    <Image source={require('assets/logout.png')}></Image>
-                </TouchableOpacity>
-            </View>
+                {/* Profile Title */}
+                <View style={styles.profileTitle}>
+                    <Text style={styles.profileTitleText}>Profile</Text>
+                </View>
 
-        </View>
-    )
-}
+                {/* Profile Picture */}
+                <View style={styles.fotoProfile}>
+                    <Image source={require('assets/profilefoto.png')} style={styles.profileImage} />
+                    <TouchableOpacity style={styles.changePhotoButton}>
+                        <Image source={require('assets/buttonfotoprofile.png')} />
+                    </TouchableOpacity>
+                </View>
 
+                {/* Input Fields */}
+                <View style={styles.inputContainer}>
+                    <Text style={styles.label}>Username</Text>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setUsername}
+                    />
 
+                    <Text style={styles.label}>Email</Text>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setEmail}
+                    />
 
+                    <Text style={styles.label}>Password</Text>
+                    <View style={styles.passwordContainer}>
+                        <TextInput
+                            style={styles.inputWithIcon}
+                            onChangeText={setPassword}
+                            secureTextEntry={!passwordVisible}
+                        />
+                        <TouchableOpacity
+                            style={styles.eyeIcon}
+                            onPress={() => setPasswordVisible(!passwordVisible)}
+                        >
+                            <Ionicons
+                                name={passwordVisible ? "eye-outline" : "eye-off-outline"}
+                                size={24}
+                                color="#888"
+                            />
+                        </TouchableOpacity>
+                    </View>
+
+                    <Text style={styles.label}>Confirm Password</Text>
+                    <View style={styles.confirmPasswordContainer}>
+                        <TextInput
+                            style={styles.inputWithIcon}
+                            onChangeText={setConfirmPassword}
+                            secureTextEntry={!confirmPasswordVisible}
+                        />
+                        <TouchableOpacity
+                            style={styles.eyeIcon}
+                            onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
+                        >
+                            <Ionicons
+                                name={confirmPasswordVisible ? "eye-outline" : "eye-off-outline"}
+                                size={24}
+                                color="#888"
+                            />
+                        </TouchableOpacity>
+                    </View>
+
+                    <TouchableOpacity>
+                        <Image source={require('assets/savechange.png')} style={styles.saveButton} />
+                    </TouchableOpacity>
+                </View>
+
+                {/* Logout Button */}
+                <View style={styles.logoutButton}>
+                    <TouchableOpacity>
+                        <Image source={require('assets/logout.png')} />
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        flexDirection: "column",
-        alignSelf: "stretch",
-        justifyContent: 'center',
-        alignItems: 'center',
         backgroundColor: "#EFFBFC",
     },
-
-    BackButton: {
-        top: 45,
-        right: 165,
+    scrollView: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-
-    FotoProfile: {
-        flex: 1,
-        height: 5,
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
-        top: -60,
+    backButton: {
+        marginTop: 45,
+        alignSelf: 'flex-start',
+        marginLeft: 20,
     },
-
+    profileTitle: {
+        marginVertical: 20,
+        alignItems: 'center',
+    },
+    profileTitleText: {
+        fontWeight: 'bold',
+        fontSize: 18,
+    },
+    fotoProfile: {
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    profileImage: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+    },
+    changePhotoButton: {
+        marginTop: -15,
+    },
+    inputContainer: {
+        width: '90%',
+    },
+    label: {
+        fontWeight: 'bold',
+        marginBottom: 8,
+    },
     input: {
-        width: 340,
         height: 47,
-        borderRadius:10,
+        borderRadius: 10,
+        paddingHorizontal: 10,
+        backgroundColor: "white",
+        marginBottom: 16,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    inputWithIcon: {
+        flex: 1,
+        height: 47,
+        borderRadius: 10,
         padding: 3,
-        backgroundColor:"white",
+        backgroundColor: "white",
         marginBottom: 16,
         paddingHorizontal: 10,
         shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
-
         elevation: 5,
-        },
-
-        kolominput: {
-            bottom: 70,
-            left: 13,
-        },
-
-        kolomlogout: {
-            justifyContent: 'flex-start',
-            padding: 30,
-        },
-
-        passwordContainer: {
-            flexDirection: "row",
-          },
-
-        confirmPasswordContainer: {
-            flexDirection: "row",
-          },
-})
+    },
+    passwordContainer: {
+        flexDirection: "row",
+        alignItems: 'center',
+        position: 'relative',
+    },
+    confirmPasswordContainer: {
+        flexDirection: "row",
+        alignItems: 'center',
+        position: 'relative',
+    },
+    eyeIcon: {
+        position: 'absolute',
+        right: 10,
+        top: '35%',
+        transform: [{ translateY: -12 }],
+    },
+    saveButton: {
+        marginTop: 20,
+        alignSelf: 'center',
+    },
+    logoutButton: {
+        marginTop: 30,
+        alignItems: 'center',
+        marginBottom: 50
+    },
+});
 
 export default ProfileScreen;
