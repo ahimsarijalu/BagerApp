@@ -6,13 +6,15 @@ import {
   Image,
   StyleSheet,
   KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Keyboard } from "react-native";
+import { Keyboard, Dimensions } from "react-native";
+const { width, height } = Dimensions.get("window");
 import { useNavigation } from "@react-navigation/native";
-
 import Ionicons from "@expo/vector-icons/Ionicons";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -21,31 +23,39 @@ const LoginScreen = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const animatedStyles = useAnimatedStyle(() => ({
-    transform: [{ translateY: !tapped? withTiming(translateY.value + 0) : withTiming(translateY.value - 200)}],
+    transform: [
+      {
+        translateY: !tapped
+          ? withTiming(translateY.value + 0)
+          : withTiming(translateY.value - 200),
+      },
+    ],
   }));
 
   useEffect(() => {
-    const upp = Keyboard.addListener('keyboardDidShow', () => {
-      setTapped(true)
+    const upp = Keyboard.addListener("keyboardDidShow", () => {
+      setTapped(true);
     });
-    const down = Keyboard.addListener('keyboardDidHide', () => {
-      setTapped(false)
+    const down = Keyboard.addListener("keyboardDidHide", () => {
+      setTapped(false);
     });
     return () => {
       upp.remove();
       down.remove();
-    }
-  })
+    };
+  }, []);
 
   return (
-    <View style={styles.container}>
-      {/* Gambar Atas */}
-      <View style={styles.header}>
-        <Image source={require("assets/image_25.png")} style={styles.topImage} />
-        <Image source={require("assets/bagerlogin.png")} />
-      </View>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <View style={styles.header}>
+          <Image source={require("assets/image_hand.png")} style={styles.topImage} />
+          <Image source={require("assets/bagerlogin.png")} style={styles.bagerImage} />
+        </View>
 
-      {/* Login */}
         <Animated.View style={[styles.formContainer, animatedStyles]}>
           <Text style={styles.formTitle}>Welcome Back Challenger</Text>
           <Text style={styles.formSubtitle}>
@@ -81,7 +91,7 @@ const LoginScreen = () => {
           <View style={styles.googleContainer}>
             <TouchableOpacity
               onPress={() => {
-                alert("tsx");
+                alert("Google Auth");
               }}
             >
               <Image
@@ -98,14 +108,14 @@ const LoginScreen = () => {
           <Text style={styles.footerText}>
             Don't Have an Account?{" "}
             <Text
-              style={[styles.registerText]}
-              // onPress={() => navigation.navigate("signup")}
+              style={styles.registerText}
             >
               Register Now
             </Text>
           </Text>
         </Animated.View>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -115,20 +125,23 @@ const styles = StyleSheet.create({
     backgroundColor: "#44c9e0",
   },
   header: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     paddingVertical: 20,
+    height: height * 0.4,
   },
   topImage: {
-    width: 420,
-    height: 150,
-    marginTop: 70,
+    width: width * 0.8,
+    height: undefined,
+    aspectRatio: 420 / 150,
+    resizeMode: "contain",
+    marginBottom: 10,
   },
-  subtitle: {
-    fontSize: 18,
-    color: "#fff",
-    marginTop: 5,
+  bagerImage: {
+    width: width * 0.8,
+    height: undefined,
+    aspectRatio: 420 / 150,
+    resizeMode: "contain",
   },
   formContainer: {
     flex: 1,
@@ -137,26 +150,17 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     paddingVertical: 20,
     paddingHorizontal: 20,
-    // bottom:200
-  },
-  formContainerUpper: {
-    flex: 1,
-    backgroundColor: "#fff",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingVertical: 20,
-    paddingHorizontal: 20,
-    bottom:200,
   },
   formTitle: {
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 5,
     paddingTop: 5,
+    textAlign: "center",
   },
   formSubtitle: {
     fontSize: 14,
-    textAlign: "left",
+    textAlign: "center",
     color: "#666",
     marginBottom: 20,
   },
@@ -209,8 +213,8 @@ const styles = StyleSheet.create({
   },
   registerText: {
     fontWeight: "bold",
+    color: "#44c9e0",
   },
-  containerregister: {},
 });
 
 export default LoginScreen;
