@@ -15,7 +15,7 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="home"
+          initialRouteName="login"
           screenOptions={{ contentStyle: { backgroundColor: "#EFFBFC" } }}
         >
           <Stack.Screen
