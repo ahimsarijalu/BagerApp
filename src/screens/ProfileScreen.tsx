@@ -1,14 +1,111 @@
-import React, { useState } from 'react';
-import { View, Image, Text, TouchableOpacity, TextInput, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Image, Text, TouchableOpacity, TextInput, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useNavigation } from '@react-navigation/native';
+import { supabase } from '@/utils/supabase';
 
 const ProfileScreen = () => {
+    const navigation = useNavigation();
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false); 
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);  
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+                
+                if (sessionError) throw sessionError;
+                
+                const user = session?.user;
+                
+                if (user) {
+                    console.log('User ID:', user.id);
+                    
+                    const { data, error } = await supabase
+                        .from('users') // Ensure this matches your table name
+                        .select('username, email')
+                        .eq('id', user.id)
+                        .single();
+
+                    if (error) {
+                        console.error('Error fetching user data:', error.message);
+                    } else {
+                        setUsername(data.username);
+                        setEmail(data.email);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching user profile:', error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUserProfile();
+    }, []);
+
+    const handleLogout = async () => {
+        try {
+            const { error } = await supabase.auth.signOut();
+            if (error) throw error;
+
+            // Navigate to the login screen or any other appropriate action
+            navigation.navigate('login');
+        } catch (error) {
+            console.error('Logout error:', error.message);
+            // Optionally show an error message to the user
+        }
+    };
+
+    const handleSaveChanges = async () => {
+        setLoading(true);
+
+        if (password !== confirmPassword) {
+            Alert.alert('Passwords do not match', 'Please make sure both passwords match.');
+            setLoading(false);
+            return;
+        }
+
+        try {
+            // Assuming 'username' and 'password' can be updated
+            const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+            
+            if (sessionError) throw sessionError;
+            
+            const user = session?.user;
+            
+            if (user) {
+                // Update username
+                const { error: updateError } = await supabase
+                    .from('users') // Ensure this matches your table name
+                    .update({ username })
+                    .eq('id', user.id);
+
+                if (updateError) throw updateError;
+
+                // Update password
+                if (password) {
+                    const { error: authError } = await supabase.auth.updateUser({ password });
+
+                    if (authError) throw authError;
+                }
+
+                // Handle successful update
+                // Optionally show a success message to the user
+                Alert.alert('Profile updated', 'Your profile has been updated successfully.');
+            }
+        } catch (error) {
+            console.error('Update error:', error.message);
+            // Optionally show an error message to the user
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <KeyboardAvoidingView
@@ -41,21 +138,26 @@ const ProfileScreen = () => {
                     <Text style={styles.label}>Username</Text>
                     <TextInput
                         style={styles.input}
+                        value={username}
                         onChangeText={setUsername}
+                        editable={!loading} // Make sure fields are not editable while loading
                     />
 
                     <Text style={styles.label}>Email</Text>
                     <TextInput
                         style={styles.input}
-                        onChangeText={setEmail}
+                        value={email}
+                        editable={false} // Email field is read-only
                     />
 
                     <Text style={styles.label}>Password</Text>
                     <View style={styles.passwordContainer}>
                         <TextInput
                             style={styles.inputWithIcon}
+                            value={password}
                             onChangeText={setPassword}
                             secureTextEntry={!passwordVisible}
+                            placeholder="Enter new password"
                         />
                         <TouchableOpacity
                             style={styles.eyeIcon}
@@ -73,8 +175,10 @@ const ProfileScreen = () => {
                     <View style={styles.confirmPasswordContainer}>
                         <TextInput
                             style={styles.inputWithIcon}
+                            value={confirmPassword}
                             onChangeText={setConfirmPassword}
                             secureTextEntry={!confirmPasswordVisible}
+                            placeholder="Confirm new password"
                         />
                         <TouchableOpacity
                             style={styles.eyeIcon}
@@ -88,14 +192,14 @@ const ProfileScreen = () => {
                         </TouchableOpacity>
                     </View>
 
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={handleSaveChanges}>
                         <Image source={require('assets/savechange.png')} style={styles.saveButton} />
                     </TouchableOpacity>
                 </View>
 
                 {/* Logout Button */}
                 <View style={styles.logoutButton}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={handleLogout}>
                         <Image source={require('assets/logout.png')} />
                     </TouchableOpacity>
                 </View>

@@ -16,13 +16,17 @@ const { width, height } = Dimensions.get("window");
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import { supabase } from "@/utils/supabase";
 
 const LoginScreen = ({ navigation: { navigate } }) => {
   const navigation = useNavigation();
   const translateY = useSharedValue(0);
   const [tapped, setTapped] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const Dimen = Dimensions.get("screen"); 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
   const animatedStyles = useAnimatedStyle(() => ({
     transform: [
@@ -47,6 +51,23 @@ const LoginScreen = ({ navigation: { navigate } }) => {
     };
   }, []);
 
+  const handleLogin = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      navigation.navigate("home");
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -69,6 +90,8 @@ const LoginScreen = ({ navigation: { navigate } }) => {
             style={styles.input}
             placeholder="Email"
             keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
           />
 
           <View style={styles.passwordContainer}>
@@ -76,6 +99,8 @@ const LoginScreen = ({ navigation: { navigate } }) => {
               secureTextEntry={!passwordVisible}
               style={styles.inputPassword}
               placeholder="Password"
+              value={password}
+              onChangeText={setPassword}
             />
             <TouchableOpacity
               onPress={() => {
@@ -90,6 +115,8 @@ const LoginScreen = ({ navigation: { navigate } }) => {
             </TouchableOpacity>
           </View>
 
+          {error && <Text style={styles.errorText}>{error}</Text>}
+
           <View style={styles.googleContainer}>
             <TouchableOpacity
               onPress={() => {
@@ -103,8 +130,14 @@ const LoginScreen = ({ navigation: { navigate } }) => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Login</Text>
+          <TouchableOpacity 
+            style={styles.button}
+            onPress={handleLogin}
+            disabled={loading}
+          >
+            <Text style={styles.buttonText}>
+              {loading ? "Logging in..." : "Login"}
+            </Text>
           </TouchableOpacity>
 
           <Text style={styles.footerText}>
@@ -217,6 +250,11 @@ const styles = StyleSheet.create({
   registerText: {
     fontWeight: "bold",
     color: "#44c9e0",
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginBottom: 10,
   },
 });
 

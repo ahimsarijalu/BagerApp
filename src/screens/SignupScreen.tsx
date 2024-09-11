@@ -7,15 +7,15 @@ import {
   StyleSheet,
   ScrollView,
   Image,
-  Dimensions,
   Keyboard,
   Platform,
   KeyboardAvoidingView,
-  useWindowDimensions
+  useWindowDimensions,
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useNavigation } from '@react-navigation/native';
+import { supabase } from '@/utils/supabase';
 
 const SignupScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -27,6 +27,8 @@ const SignupScreen: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [securePassword, setSecurePassword] = useState(true);
   const [secureConfirmPassword, setSecureConfirmPassword] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const { width, height } = useWindowDimensions();
 
@@ -46,6 +48,24 @@ const SignupScreen: React.FC = () => {
       down.remove();
     };
   }, []);
+
+  const handleSignup = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      if (error) throw error;
+      navigation.navigate('login');
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
@@ -101,8 +121,16 @@ const SignupScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.registerButton}>
-            <Text style={styles.registerButtonText}>Register Now!</Text>
+          {error && <Text style={styles.errorText}>{error}</Text>}
+
+          <TouchableOpacity 
+            style={styles.registerButton} 
+            onPress={handleSignup}
+            disabled={loading}
+          >
+            <Text style={styles.registerButtonText}>
+              {loading ? "Registering..." : "Register"}
+            </Text>
           </TouchableOpacity>
         </Animated.View>
       </ScrollView>
@@ -185,6 +213,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginBottom: 10,
   },
 });
 

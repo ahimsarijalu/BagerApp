@@ -1,9 +1,10 @@
 import colors from "@/theme/Colors";
-import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from "react-native";
 import { Avatar, Button } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Guide from "@/components/Guide";
 import GuideCover from "@/components/GuideCover";
+import { useNavigation } from "@react-navigation/native";
 
 const guides = [
   {
@@ -39,6 +40,8 @@ const guides = [
 ];
 
 const HomeScreen = ({ navigation: { navigate } }) => {
+  const navigation = useNavigation();
+
   function goToPlayScreen() {
     navigate("playScreen");
   }
@@ -51,9 +54,9 @@ const HomeScreen = ({ navigation: { navigate } }) => {
       </Text>
       <View style={styles.header}>
         <View style={styles.profile}>
-          <View>
-            <Avatar.Image size={48} source={require("assets/profilePic.png")} />
-          </View>
+          <TouchableOpacity onPress={() => navigation.navigate('profile')}>
+            <Avatar.Image size={48} source={require('assets/profilePic.png')} />
+          </TouchableOpacity>
           <View style={styles.profileInfo}>
             <Text style={styles.name}>Prima Gaul</Text>
             <Text style={styles.points}>2890 points</Text>
