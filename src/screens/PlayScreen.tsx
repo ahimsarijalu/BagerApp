@@ -16,6 +16,7 @@ const PlayScreen = () => {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
+        paddingVertical: 40
       }}
     >
       <View style={{ flex: 1, flexDirection: "row" }}>

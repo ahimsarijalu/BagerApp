@@ -1,16 +1,52 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Image, TouchableOpacity, TextInput, Text} from "react-native";
+import { supabase } from '@/utils/supabase';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { StyleSheet, View, Image, TouchableOpacity, TextInput, Text, Alert} from "react-native";
 
-const ProfileScreen = () => {
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
+const ProfileScreen = ({route}) => {    
+    const [username, setUsername] = useState(route.params.data.name);
+    const [email, setEmail] = useState(route.params.data.email);
     const [password, setPassword] = useState('');
+    const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmpassword, setConfirmPassword] = useState('');
+    const navigation = useNavigation();
+
+    // console.log(route.params.data.id);
+    const updateAuth = async() => {
+        try {
+            let { data, error } = await supabase
+            .auth.updateUser({
+                email: email,
+                password: password
+            })
+            if (data){
+                updateUser();
+            }
+        } catch (error) {
+            Alert.alert(error.message);
+        }
+    }
+
+    const updateUser = async() => {
+        try {
+            let { data, error } = await supabase
+            .from('users')
+            .update({ 'email': email, 'name': username})
+            .eq('id',route.params.data.id)
+            .select();
+            if (data){
+                Alert.alert("Data Terupdate!");
+                navigation.navigate('home');
+            }
+        } catch (error) {
+            Alert.alert(error.message);
+        }
+    }
 
     return (
         <View style={styles.container}>
 
-            //Profile Foto dan Button Foto Profile
             <View style={styles.FotoProfile}>
                 <View>
                     <Image source={require('assets/profilefoto.png')} style={{alignSelf: 'center'}}></Image>
@@ -22,45 +58,71 @@ const ProfileScreen = () => {
                 </View>
             </View>
         
-            /*
-            Input Text Untuk Username, Email, Password, 
-            dan Confirm Password
-            */
             <View style={styles.kolominput}>
                 <Text style={{fontWeight:"bold", marginBottom:8}}>Username</Text>
                 <TextInput
                 style={styles.input}
-                onChangeText={setUsername}
+                value={username}
+                onChangeText={(t) => setUsername(t)}
                 />
                 
                 <Text style={{fontWeight:"bold", marginBottom:8}}>Email</Text>
                 <TextInput
                 style={styles.input}
-                onChangeText={setEmail}
+                value={route.params.data.email}
+                onChangeText={(t) => setEmail(t)}
                 />
 
-                <Text style={{fontWeight:"bold", marginBottom:8}}>Password</Text>
-                <TextInput
-                style={styles.input}
-                onChangeText={setPassword}
-                />
+                {/* <View style={styles.passwordContainer}>
+                    <Text style={{fontWeight:"bold", marginBottom:8}}>Password</Text>
+                    <TextInput
+                    secureTextEntry={!passwordVisible}
+                    style={styles.input}
+                    onChangeText={(t) => setPassword(t)}
+                    />
+                    <TouchableOpacity
+                    onPress={() => {
+                        setPasswordVisible(!passwordVisible);
+                    }}
+                    style={{alignSelf: "flex-end"}}
+                    >
+                    <Ionicons
+                        name={passwordVisible ? "eye-outline" : "eye-off-outline"}
+                        size={24}
+                        color="#888"
+                    />
+                    </TouchableOpacity>
+                </View>
 
-                <Text style={{fontWeight:"bold", marginBottom:8}}>Confirm Password</Text>
-                <TextInput
-                style={styles.input}
-                onChangeText={setConfirmPassword}
-                />
-
+                <View style={styles.passwordContainer}>
+                    <Text style={{fontWeight:"bold", marginBottom:8}}>Confirm Password</Text>
+                    <TextInput
+                    secureTextEntry={!passwordVisible}
+                    style={styles.input}
+                    onChangeText={(t) => setConfirmPassword(t)}
+                    />
+                    <TouchableOpacity
+                    onPress={() => {
+                        setPasswordVisible(!passwordVisible);
+                    }}
+                    style={{alignSelf: "flex-end"}}
+                    >
+                    <Ionicons
+                        name={passwordVisible ? "eye-outline" : "eye-off-outline"}
+                        size={24}
+                        color="#888"
+                    />
+                    </TouchableOpacity>
+                </View> */}
                 <View>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => updateAuth()}>
                         <Image source={require('assets/savechange.png')}></Image>
                     </TouchableOpacity>
                 </View>
             </View>
 
-            //Button Log Out
             <View style={styles.kolomlogout}>
-                <TouchableOpacity style={{left: -95}}>
+                <TouchableOpacity style={{left: -95}} onPress={() => {supabase.auth.signOut() && navigation.navigate('login')}}>
                     <Image source={require('assets/logout.png')}></Image>
                 </TouchableOpacity>
             </View>
@@ -111,12 +173,15 @@ const styles = StyleSheet.create({
         },
 
         kolominput: {
-            top: -120,
+            bottom: 280,
         },
 
         kolomlogout: {
-            top: -20,
-        }
+            top: -180,
+        },
+        passwordContainer: {
+            marginBottom: 20
+        },
 })
 
 export default ProfileScreen;

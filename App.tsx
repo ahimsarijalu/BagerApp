@@ -7,6 +7,7 @@ import SignupScreen from "@/screens/SignupScreen";
 import LoginScreen from "@/screens/LoginScreen";
 import HomeScreen from "@/screens/HomeScreen";
 import PlayScreen from "@/screens/PlayScreen";
+import ProfileScreen from "@/screens/ProfileScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,9 +22,14 @@ export default function App() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
+            name="profile"
+            component={ProfileScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
             name="home"
             component={HomeScreen}
-            options={{ headerShown: false }}
+            options={{ headerShown: false, gestureEnabled:false }}
           />
           <Stack.Screen
             name="signup"

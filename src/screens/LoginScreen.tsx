@@ -9,27 +9,30 @@ import {
   Platform,
   ScrollView,
   Dimensions,
-  Keyboard
+  Keyboard,
+  Alert
 } from "react-native";
 import React, { useEffect, useState } from "react";
 const { width, height } = Dimensions.get("window");
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import { supabase } from "@/utils/supabase";
+import { Session } from "@supabase/supabase-js";
 
 const LoginScreen = () => {
   const navigation = useNavigation();
   const translateY = useSharedValue(0);
   const [tapped, setTapped] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const Dimen = Dimensions.get("screen"); 
+  const [session, setSession] = useState<Session | null>(null)
   
   const animatedStyles = useAnimatedStyle(() => ({
     transform: [
       {
         translateY: !tapped
           ? withTiming(translateY.value + 0)
-          : withTiming(translateY.value - 200),
+          : withTiming(translateY.value - 140),
       },
     ],
   }));
@@ -41,11 +44,40 @@ const LoginScreen = () => {
     const down = Keyboard.addListener("keyboardDidHide", () => {
       setTapped(false);
     });
+    
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+
     return () => {
       upp.remove();
       down.remove();
     };
   }, []);
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  async function signInWithEmail() {
+    (true)
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    })
+
+    if (error) {
+      Alert.alert(error.message)
+    } else {
+      navigation.navigate('home',{email: session.user.email});
+    }
+    setLoading(false)
+    return true;
+  }
 
   return (
     <KeyboardAvoidingView
@@ -68,6 +100,7 @@ const LoginScreen = () => {
           <TextInput
             style={styles.input}
             placeholder="Email"
+            onChangeText={(t) => setEmail(t)}
             keyboardType="email-address"
           />
 
@@ -75,6 +108,7 @@ const LoginScreen = () => {
             <TextInput
               secureTextEntry={!passwordVisible}
               style={styles.inputPassword}
+              onChangeText={(t) => setPassword(t)}
               placeholder="Password"
             />
             <TouchableOpacity
@@ -103,7 +137,7 @@ const LoginScreen = () => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={() => signInWithEmail()}>
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
 
