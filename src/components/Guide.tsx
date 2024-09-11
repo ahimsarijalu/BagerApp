@@ -2,11 +2,12 @@ import { StyleSheet, Text, View, Dimensions } from "react-native";
 import React from "react";
 import GuideType from "@/types/GuideType";
 import { Image } from "expo-image";
+import GuideContentItem from "./GuideContentItem";
 
 const blurhash =
   "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
-const Guide = ({ image, title, content, indicator }: GuideType) => {
+const Guide = ({ image, title, content, index }: GuideType) => {
   return (
     <View style={styles.container}>
       <Image
@@ -17,14 +18,17 @@ const Guide = ({ image, title, content, indicator }: GuideType) => {
         transition={1000}
       />
       <Text style={styles.title}>{title}</Text>
-      {content.map((c, i) => (
-        <Text>
-          <Text style={styles.indicator}>{indicator[i]}</Text>
-          <Text key={i} style={styles.content}>
-            {c}
-          </Text>
-        </Text>
-      ))}
+      <View>
+        {content.map((guide, i) => {
+          return (
+            <GuideContentItem
+              key={i}
+              text={guide}
+              index={index != null ? i + 1 : null}
+            />
+          );
+        })}
+      </View>
     </View>
   );
 };
@@ -36,9 +40,9 @@ const styles = StyleSheet.create({
   container: {
     padding: 24,
     margin: 16,
+    marginTop: 8,
     backgroundColor: "white",
     borderRadius: 20,
-    minHeight: 400,
     width: width - 100,
   },
   image: {
@@ -46,14 +50,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 16,
+    minHeight: 160,
   },
   title: {
     paddingVertical: 8,
     fontSize: 16,
     fontWeight: "600",
   },
-  indicator: {
-    
+  content: {
+    marginLeft: 8,
+    marginTop: 8,
   },
-  content: {},
 });

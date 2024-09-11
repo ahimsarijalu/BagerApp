@@ -14,7 +14,10 @@ export default function App() {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="login">
+        <Stack.Navigator
+          initialRouteName="home"
+          screenOptions={{ contentStyle: { backgroundColor: "#EFFBFC" } }}
+        >
           <Stack.Screen
             name="playScreen"
             component={PlayScreen}
@@ -28,7 +31,7 @@ export default function App() {
           <Stack.Screen
             name="signup"
             component={SignupScreen}
-            options={{ headerShown: false, headerTitle: "Sign Up"}}
+            options={{ headerShown: false, headerTitle: "Sign Up" }}
           />
           <Stack.Screen
             name="login"

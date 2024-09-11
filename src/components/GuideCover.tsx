@@ -1,6 +1,5 @@
 import { StyleSheet, Text, View, Dimensions } from "react-native";
-import { Image } from 'expo-image';
-
+import { Image } from "expo-image";
 
 import React from "react";
 import GuideType from "@/types/GuideType";
@@ -43,8 +42,10 @@ const styles = StyleSheet.create({
   },
   title: {
     paddingVertical: 8,
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: "600",
+    textAlign: "center",
+    marginTop: 8
   },
   content: {},
 });

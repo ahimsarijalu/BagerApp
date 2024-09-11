@@ -16,7 +16,7 @@ import GuideCover from "@/components/GuideCover";
 const guides = [
   {
     image: require("assets/guide-cover.png"),
-    title: "Cover",
+    title: "Game Guide",
   },
   {
     image: require("assets/guide-1.png"),
@@ -26,27 +26,23 @@ const guides = [
       'Scissors Beat Paper: "Sharp scissors slice through the paper with ease, cutting it cleanly."',
       'Paper Beats Rock: "The paper wraps around the rock, completely covering and trapping it."',
     ],
-    indicator: ["•", "•", "•"],
   },
   {
     image: require("assets/guide-2.png"),
     title: "How to Play (Steps):",
     content: [
-      'Rock Beats Scissors: "The solid rock crushes the fragile scissors with its strength."',
-      'Scissors Beat Paper: "Sharp scissors slice through the paper with ease, cutting it cleanly."',
-      'Paper Beats Rock: "The paper wraps around the rock, completely covering and trapping it."',
+      "Choose One (Rock, Scissors, or Paper): On the left, you’ll see hand icons representing your options.",
+      "Wait for the Result: A clock or loading icon indicates you're waiting for your opponent's choice.",
+      "See Who Wins: A victory icon, like a trophy or a winning hand, will show who came out on top!",
     ],
-    indicator: ["1.", "2.", "3."],
   },
   {
     image: require("assets/guide-3.png"),
     title: "Tips dan Trick (Optional):",
     content: [
-      'Rock Beats Scissors: "The solid rock crushes the fragile scissors with its strength."',
-      'Scissors Beat Paper: "Sharp scissors slice through the paper with ease, cutting it cleanly."',
-      'Paper Beats Rock: "The paper wraps around the rock, completely covering and trapping it."',
+      "Try to observe your opponent's patterns.",
+      "Play quickly and anticipate their strategy!",
     ],
-    indicator: ["•", "•", "•"],
   },
 ];
 
@@ -71,29 +67,39 @@ const HomeScreen = () => {
           <Image source={require("assets/juara.png")}></Image>
         </View>
       </View>
-      <ScrollView horizontal={true}>
+      <ScrollView horizontal={true} style={{ minHeight: 400 }}>
         {guides.map((guide, index) =>
           index === 0 ? (
             <GuideCover key={index} image={guide.image} title={guide.title} />
+          ) : index === 2 ? (
+            <Guide
+              key={index}
+              image={guide.image}
+              title={guide.title}
+              content={guide.content}
+              index={index}
+            />
           ) : (
             <Guide
               key={index}
               image={guide.image}
               title={guide.title}
               content={guide.content}
-              indicator={guide.indicator}
             />
           )
         )}
       </ScrollView>
-      {/* <View>
-        <Image source={require("assets/guide-cover.png")} />
-        <Text>saasas</Text>
-        <Text>Content</Text>
-      </View> */}
-      <View>
-        <Button>
-          <Ionicons />
+      <View style={styles.buttonContainer}>
+        <Button
+          mode="elevated"
+          style={styles.playButton}
+          buttonColor="white"
+          textColor={colors.totalPoints}
+          icon={() => (
+            <Ionicons name="play" size={36} color={colors.totalPoints} />
+          )}
+        >
+          <Text style={styles.buttonText}>Start Game</Text>
         </Button>
       </View>
     </View>
@@ -117,6 +123,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 24,
     marginHorizontal: 36,
+    marginBottom: 24,
   },
   profile: {
     flexDirection: "row",
@@ -134,6 +141,24 @@ const styles = StyleSheet.create({
   },
   guide: {
     margin: 8,
+  },
+  buttonContainer: {
+    marginTop: 12,
+  },
+  playButton: {
+    marginHorizontal: 90,
+    shadowColor: colors.totalPoints,
+    shadowOpacity: 0.4,
+    height: 250,
+    borderRadius: 48,
+    justifyContent: "center",
+    alignContent: "center",
+    marginBottom: 8,
+  },
+  buttonText: {
+    flex: 1,
+    fontSize: 20,
+    fontWeight: '700'
   },
 });
 
