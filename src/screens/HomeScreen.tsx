@@ -1,13 +1,5 @@
 import colors from "@/theme/Colors";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  ScrollView,
-  Dimensions,
-  SafeAreaView,
-} from "react-native";
+import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
 import { Avatar, Button } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Guide from "@/components/Guide";
@@ -46,7 +38,11 @@ const guides = [
   },
 ];
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation: { navigate } }) => {
+  function goToPlayScreen() {
+    navigate("playScreen");
+  }
+
   return (
     <View>
       <Text style={styles.greetings}>
@@ -98,6 +94,7 @@ const HomeScreen = () => {
           icon={() => (
             <Ionicons name="play" size={36} color={colors.totalPoints} />
           )}
+          onPress={() => navigate('playScreen')}
         >
           <Text style={styles.buttonText}>Start Game</Text>
         </Button>
@@ -158,7 +155,7 @@ const styles = StyleSheet.create({
   buttonText: {
     flex: 1,
     fontSize: 20,
-    fontWeight: '700'
+    fontWeight: "700",
   },
 });
 

@@ -2,11 +2,11 @@ import { View, StyleSheet, Text } from "react-native";
 import React, { useState } from "react";
 import { Card } from "react-native-paper";
 
-export default function PlayerCard({ name, image, color }) {
+export default function PlayerCardPicked({ cardName, image, color }) {
   return (
     <View>
       <Card style={styles.card}>
-        <Card.Cover source={image} resizeMode="cover" width={100} />
+        <Card.Cover style={{height: 300}} source={image} resizeMode="cover" width={100} height={300} />
         <Card
           style={[styles.button, { backgroundColor: color }]}
           mode="contained"
@@ -16,10 +16,11 @@ export default function PlayerCard({ name, image, color }) {
               style={{
                 color: "white",
                 fontWeight: "bold",
-                fontSize: 16,
+                fontSize: 24,
+                paddingHorizontal: 64
               }}
             >
-              {name}
+              {cardName}
             </Text>
           </Card.Content>
         </Card>
@@ -36,11 +37,13 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingHorizontal: 8,
     paddingBottom: 2,
+    
   },
   button: {
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 4,
     marginTop: 6,
+  
   },
 });

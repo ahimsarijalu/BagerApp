@@ -17,7 +17,7 @@ import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation: { navigate } }) => {
   const navigation = useNavigation();
   const translateY = useSharedValue(0);
   const [tapped, setTapped] = useState(false);
@@ -111,6 +111,7 @@ const LoginScreen = () => {
             Don't Have an Account?{" "}
             <Text
               style={[styles.registerText]}
+              onPress={() => navigate('signup')}
             >
               Register Now
             </Text>
