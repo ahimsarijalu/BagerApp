@@ -19,17 +19,31 @@ export default function App() {
           <Stack.Screen
             name="playScreen"
             component={PlayScreen}
-            options={{ headerShown: false }}
+            options={{ 
+              headerShown: false,
+              presentation: 'fullScreenModal',
+              animationTypeForReplace: 'push',
+              animation:'slide_from_right'
+            }}
           />
-          <Stack.Screen
+          {/* <Stack.Screen
             name="profile"
             component={ProfileScreen}
-            options={{ headerShown: false }}
-          />
+            options={{ 
+              headerShown: false,
+              presentation: 'modal',
+              animationTypeForReplace: 'push',
+              animation:'slide_from_right'
+            }}
+            
+          /> */}
           <Stack.Screen
             name="home"
             component={HomeScreen}
-            options={{ headerShown: false, gestureEnabled:false }}
+            options={{ 
+              headerShown: false, 
+              gestureEnabled:false,
+            }}
           />
           <Stack.Screen
             name="signup"

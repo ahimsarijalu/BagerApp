@@ -4,7 +4,7 @@ import { TouchableOpacity } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
 import { Session } from "@supabase/supabase-js";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, Image, ScrollView, Alert } from "react-native";
+import { StyleSheet, Text, View, Image, ScrollView, Alert, ImageBackground, Modal, Keyboard } from "react-native";
 import { Avatar } from "react-native-paper";
 import Carousel from "react-native-reanimated-carousel";
 
@@ -16,12 +16,20 @@ import guide0 from '../../assets/guide-cover.png';
 import playImgBtn from '../../assets/start.png';
 import { StatusBar } from "expo-status-bar";
 import PlayScreen from "./PlayScreen";
+import FadeIn from "react-native-fade-in-image";
+import ProfileScreen from "./ProfileScreen";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import GestureRecognizer from "react-native-swipe-gestures";
 
 const HomeScreen = ({route}) => {
   const navigation = useNavigation();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState({});
+  const [email, setEmail] = useState("");
+  const [tapped, setTapped] = useState(false);
+  const translateY = useSharedValue(0);
+  const [modalVisible, setModalVisible] = useState(false);
   const guideScreens = [
     guide0,
     guide1,
@@ -34,18 +42,50 @@ const HomeScreen = ({route}) => {
       setSession(session)
     })
 
+    const upp = Keyboard.addListener("keyboardDidShow", () => {
+      setTapped(true);
+    });
+    const down = Keyboard.addListener("keyboardDidHide", () => {
+      setTapped(false);
+    });
+
     userActive();
+
+    return () => {
+      upp.remove();
+      down.remove();
+    };
   }, [])
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateY: !tapped
+          ? withTiming(translateY.value + 0,{duration: 200})
+          : withTiming(translateY.value - 160, {duration: 200}),
+      },
+    ],
+  }));
 
   const userActive = async() => {
       try {
         setLoading(true)
-
-        let { data, error } = await supabase
-        .from('users')
-        .select("*")
-        .like('email',"%"+route.params.email+"%");
-        setUserData(data[0]);
+        if (!email){
+          let { data, error } = await supabase
+          .from('users')
+          .select("*")
+          .like('email',"%"+route.params.email+"%");
+          setUserData(data[0]);
+          setEmail(data[0].email);
+        } else {
+          let { data, error } = await supabase
+          .from('users')
+          .select("*")
+          .like('email',"%"+email+"%");
+          setUserData(data[0]);
+          setEmail(data[0].email);
+          setModalVisible(!modalVisible);
+        }
       } catch (error) {
         if (error instanceof Error) {
           Alert.alert(error.message)
@@ -55,16 +95,22 @@ const HomeScreen = ({route}) => {
       }
   }
 
+  const flagProfileData = (data) => {
+    return data;
+  }
+
   return (
     <View style={{backgroundColor: "#EFFBFC"}}>
       <StatusBar></StatusBar>
+      <ImageBackground style={{height:900 }} source={{uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRuPn9B4Qrbf3vlRs-EYTa5v5OGg2-jT0vWH12sidTLF8NnfYsX9exjxHZDT82D6G8qZ8&usqp=CAU"}}>
+
       <Text style={styles.greetings}>
         <Text style={styles.hello}>Hello there! </Text>
         <Text>Dive in and have fun playing!</Text>
       </Text>
       <View style={styles.profile}>
         <View>
-          <TouchableOpacity onPress={() => navigation.navigate('profile', {data: userData})}>
+          <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
             <Avatar.Image size={40} source={require("assets/profilePic.png")} />
           </TouchableOpacity>
         </View>
@@ -95,11 +141,43 @@ const HomeScreen = ({route}) => {
                 )}
             />
       </View>
-      <View style={{flex:0, flexDirection:"column", margin: 20, top: 430, alignItems: "center"}}>
+      <View style={{flex:1, flexDirection:"column", margin: 20, top: 100, alignItems: "center"}}>
         <TouchableOpacity style={{padding: 10, borderRadius: 15}} onPress={() => {navigation.navigate('playScreen')}}>
-                <Image source={playImgBtn}></Image>
+                <FadeIn>
+                  <Image source={playImgBtn}></Image>
+                </FadeIn>
         </TouchableOpacity>
       </View>
+      </ImageBackground>
+      <GestureRecognizer
+        onSwipeDown={() => {
+          setModalVisible(!modalVisible);
+          userActive();
+        }}
+      >
+      <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          >
+          <Animated.View
+            style={[{
+              height: '60%',
+              marginTop: "auto",
+              backgroundColor:'blue'
+            }, animatedStyles]}>
+            <TouchableOpacity
+              style={{zIndex: 1, left: 18, shadowOpacity:0.2, shadowOffset:{height:2}}}
+              onPress={() => {
+                setModalVisible(!modalVisible);
+                userActive();
+              }}>
+              <Image style={{width:48,height:48}} source={require('../../assets/imgdown.png')}></Image>
+            </TouchableOpacity>
+            <ProfileScreen route={{params: {data: userData}}}></ProfileScreen>
+          </Animated.View>
+        </Modal>
+      </GestureRecognizer>
     </View>
   );
 };
@@ -114,7 +192,7 @@ const styles = StyleSheet.create({
     marginBottom: 12
   },
   hello: {
-    color: colors.totalPoints,
+    color: "white",
   },
   profile: {
     flexDirection: "row",

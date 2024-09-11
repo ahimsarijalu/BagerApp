@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { Image, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
 import ComputerCard from "@/components/ComputerCard";
 import PlayerCard from "@/components/PlayerCard";
 import TotalPoints from "@/components/TotalPoints";
@@ -8,17 +8,26 @@ import Streak from "@/components/Streak";
 import PointsIncrement from "@/components/PointsIncrement";
 import colors from "@/theme/Colors";
 import Countdown from "@/components/Countdown";
+import { useNavigation } from "@react-navigation/native";
 
 const PlayScreen = () => {
+  const navigation = useNavigation();
+  const [modalVisible, setModalVisible] = useState(false);
   return (
     <View
       style={{
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        paddingVertical: 40
+        paddingTop: 50,
+        paddingBottom: 70
       }}
     >
+      <View style={{height: 40}}>
+        <TouchableOpacity style={{right: 150, top:10, padding:10, backgroundColor: '#e54335', borderRadius:12}} onPress={() => navigation.goBack()}>
+          <Text style={{color:"white", fontWeight:"bold"}}>Stop Game</Text>
+        </TouchableOpacity>
+      </View>
       <View style={{ flex: 1, flexDirection: "row" }}>
         <View style={styles.card}>
           <ComputerCard />
@@ -68,6 +77,28 @@ const PlayScreen = () => {
         </View>
       </View>
       <Countdown countdown={5} />
+      <Modal
+          animationType="slide"
+          transparent={true}
+          visible={false}
+          onRequestClose={() => {
+            // this.closeButtonFunction()
+          }}>
+          <View
+            style={[{
+              height: '60%',
+              marginTop: "auto",
+              backgroundColor:'blue'
+            }]}>
+            <TouchableOpacity
+              style={{zIndex: 1, left: 18}}
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}>
+              <Image style={{width:48,height:48}} source={require('../../assets/img2.png')}></Image>
+            </TouchableOpacity>
+          </View>
+        </Modal>
     </View>
   );
 };

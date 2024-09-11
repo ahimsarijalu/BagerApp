@@ -10,13 +10,14 @@ import {
   ScrollView,
   Dimensions,
   Keyboard,
-  Alert
+  Alert,
+  Easing
 } from "react-native";
 import React, { useEffect, useState } from "react";
 const { width, height } = Dimensions.get("window");
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, { ReduceMotion, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { supabase } from "@/utils/supabase";
 import { Session } from "@supabase/supabase-js";
 
@@ -31,8 +32,12 @@ const LoginScreen = () => {
     transform: [
       {
         translateY: !tapped
-          ? withTiming(translateY.value + 0)
-          : withTiming(translateY.value - 140),
+          ? withTiming(translateY.value + 0, {
+            duration: 100,
+          })
+          : withTiming(translateY.value - 140, {
+            duration: 100,
+          }),
       },
     ],
   }));

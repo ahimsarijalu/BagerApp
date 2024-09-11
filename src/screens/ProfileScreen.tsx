@@ -11,7 +11,7 @@ const ProfileScreen = ({route}) => {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmpassword, setConfirmPassword] = useState('');
     const navigation = useNavigation();
-
+    
     // console.log(route.params.data.id);
     const updateAuth = async() => {
         try {
@@ -37,7 +37,7 @@ const ProfileScreen = ({route}) => {
             .select();
             if (data){
                 Alert.alert("Data Terupdate!");
-                navigation.navigate('home');
+                // navigation.goBack();
             }
         } catch (error) {
             Alert.alert(error.message);
@@ -46,7 +46,6 @@ const ProfileScreen = ({route}) => {
 
     return (
         <View style={styles.container}>
-
             <View style={styles.FotoProfile}>
                 <View>
                     <Image source={require('assets/profilefoto.png')} style={{alignSelf: 'center'}}></Image>
@@ -115,7 +114,7 @@ const ProfileScreen = ({route}) => {
                     </TouchableOpacity>
                 </View> */}
                 <View>
-                    <TouchableOpacity onPress={() => updateAuth()}>
+                    <TouchableOpacity style={{shadowOpacity:0.3, shadowOffset:{height:2}}} onPress={() => updateAuth()}>
                         <Image source={require('assets/savechange.png')}></Image>
                     </TouchableOpacity>
                 </View>
@@ -126,7 +125,6 @@ const ProfileScreen = ({route}) => {
                     <Image source={require('assets/logout.png')}></Image>
                 </TouchableOpacity>
             </View>
-
         </View>
     )
 }
@@ -141,7 +139,11 @@ const styles = StyleSheet.create({
         alignSelf: "stretch",
         justifyContent: 'flex-start',
         alignItems: 'center',
-        backgroundColor: "#EFFBFC",
+        backgroundColor: "#fff",
+        marginTop: -90,
+        borderRadius: 20,
+        shadowOpacity: 0.2,
+        marginBottom: -13.5
     },
 
     FotoProfile: {
@@ -173,11 +175,11 @@ const styles = StyleSheet.create({
         },
 
         kolominput: {
-            bottom: 280,
+            bottom: 120,
         },
 
         kolomlogout: {
-            top: -180,
+            top: -80,
         },
         passwordContainer: {
             marginBottom: 20
