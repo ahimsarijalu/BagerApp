@@ -25,19 +25,29 @@ const ProfileScreen = () => {
                 
                 if (user) {
                     console.log('User ID:', user.id);
-                    
-                    const { data, error } = await supabase
-                        .from('users') // Ensure this matches your table name
-                        .select('username, email')
-                        .eq('id', user.id)
-                        .single();
+
+                    // Fetch user details from the auth system
+                    const { data, error } = await supabase.auth.getUser();
 
                     if (error) {
                         console.error('Error fetching user data:', error.message);
                     } else {
-                        setUsername(data.username);
-                        setEmail(data.email);
+                        setUsername(data.user?.user_metadata?.username || 'No username');
+                        setEmail(data.user?.email || 'No email');
                     }
+                    
+                    // const { data, error } = await supabase
+                    //     .from('auth.users') // Ensure this matches your table name
+                    //     .select('username, email')
+                    //     .eq('id', user.id)
+                    //     .single();
+
+                    // if (error) {
+                    //     console.error('Error fetching user data:', error.message);
+                    // } else {
+                    //     setUsername(data.username);
+                    //     setEmail(data.email);
+                    // }
                 }
             } catch (error) {
                 console.error('Error fetching user profile:', error.message);

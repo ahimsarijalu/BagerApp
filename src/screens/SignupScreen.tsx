@@ -56,6 +56,11 @@ const SignupScreen: React.FC = () => {
       const { error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            username: username
+          },
+        },              
       });
       if (error) throw error;
       navigation.navigate('login');
