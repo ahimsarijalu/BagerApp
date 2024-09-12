@@ -11,6 +11,7 @@ import {
   Platform,
   KeyboardAvoidingView,
   useWindowDimensions,
+  Alert
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
@@ -50,24 +51,46 @@ const SignupScreen = ({ navigation: { navigate } }) => {
   const handleSignup = async () => {
     setLoading(true);
     setError(null);
+
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            username: username
-          },
-        },              
-      });
-      if (error) throw error;
-      navigate('login');
+        // Fetch a random user image
+        const response = await fetch("https://randomuser.me/api/");
+        const { results } = await response.json();
+        const randomUserImage = results[0].picture.large; // Get portrait image
+
+        // Proceed with signup and use the random image
+        const { error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    username: username,
+                    userImage: randomUserImage, // Add the random image to the user data
+                    score: 0
+                },
+            },
+        });
+
+        if (error) throw error;
+
+        // Show success message
+        const successMessage = 'Signup successful. Please check your email to verify your account.';
+        Alert.alert('Signup successful', successMessage); // For mobile
+        if (typeof window !== 'undefined') alert(successMessage); // For web
+
+        navigate('login');
     } catch (error) {
-      setError(error.message);
+        setError(error.message);
+
+        // Show error message
+        const errorMessage = `Signup error: ${error.message}`;
+        Alert.alert('Signup error', errorMessage); // For mobile
+        if (typeof window !== 'undefined') alert(errorMessage); // For web
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
+
   
 
   return (
@@ -76,7 +99,7 @@ const SignupScreen = ({ navigation: { navigate } }) => {
         <Image style={styles.imageLogo} source={require('assets/img1.png')} />
         
         <Animated.View style={[styles.animatedContainer, { width: width * 0.9, height: height * 0.75 }, animatedStyles]}>
-          <TouchableOpacity onPress={() => { navigate }}>
+          <TouchableOpacity onPress={() => { navigate('login') }}>
             <Image style={styles.goBackImage} source={require('assets/img2.png')} />
           </TouchableOpacity>
           
