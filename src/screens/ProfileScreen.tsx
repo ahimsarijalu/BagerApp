@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Image, Text, TouchableOpacity, TextInput, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useNavigation } from '@react-navigation/native';
 import { supabase } from '@/utils/supabase';
+import * as ImagePicker from 'expo-image-picker'; // Import Image Picker
 
-const ProfileScreen = () => {
-    const navigation = useNavigation();
+const ProfileScreen = ({ navigation: { navigate } }) => {
+    const [userImage, setUserImage] = useState(null);
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -34,20 +34,8 @@ const ProfileScreen = () => {
                     } else {
                         setUsername(data.user?.user_metadata?.username || 'No username');
                         setEmail(data.user?.email || 'No email');
+                        setUserImage(data.user?.user_metadata?.userImage || 'No userImage');
                     }
-                    
-                    // const { data, error } = await supabase
-                    //     .from('auth.users') // Ensure this matches your table name
-                    //     .select('username, email')
-                    //     .eq('id', user.id)
-                    //     .single();
-
-                    // if (error) {
-                    //     console.error('Error fetching user data:', error.message);
-                    // } else {
-                    //     setUsername(data.username);
-                    //     setEmail(data.email);
-                    // }
                 }
             } catch (error) {
                 console.error('Error fetching user profile:', error.message);
@@ -59,16 +47,111 @@ const ProfileScreen = () => {
         fetchUserProfile();
     }, []);
 
+    // Handle image selection
+    const handleImageSelection = async () => {
+        // Request permission to access media library
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert('Permission denied', 'We need permission to access your photo library.');
+            return;
+        }
+
+        // Launch the image picker
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            const { uri } = result.assets[0];
+            await uploadImage(uri); // Proceed to upload the selected image
+        } else {
+            Alert.alert('Image selection canceled', 'You did not select any image.');
+        }
+    };
+
+    // Handle image upload to Supabase storage
+    const uploadImage = async (uri: string) => {
+        try {
+            setLoading(true);
+            Alert.alert('Uploading', 'Your image is being uploaded, please wait.');
+
+            const fileExt = uri.split('.').pop()?.toLowerCase(); // Get file extension in lowercase
+            const fileName = `profile_image_${Date.now()}.${fileExt}`; // Generate file name with timestamp
+
+            // Determine MIME type based on file extension
+            const mimeType = fileExt === 'png' ? 'image/png' 
+                            : fileExt === 'jpg' || fileExt === 'jpeg' ? 'image/jpeg'
+                            : null;
+
+            if (!mimeType) {
+                Alert.alert('Error', 'Unsupported file type. Only JPEG, PNG, and JPG are allowed.');
+                return;
+            }
+
+            const response = await fetch(uri);
+            const blob = await response.blob(); // Convert URI to Blob
+
+            // Upload the image to Supabase storage
+            const { data, error } = await supabase.storage
+                .from('profile-images')
+                .upload(fileName, blob, {
+                    headers: {
+                        'Content-Type': mimeType, // Use dynamic MIME type
+                    },
+                });
+
+            if (error) {
+                Alert.alert('Upload error', `Could not upload image: ${error.message}`);
+                return;
+            }
+
+            // Get the public URL for the uploaded image
+            const { data: publicUrlData } = supabase.storage.from('profile-images').getPublicUrl(fileName);
+            const publicUrl = publicUrlData?.publicUrl;
+
+            if (!publicUrl) {
+                Alert.alert('Error', 'Failed to retrieve the public URL for the image.');
+                return;
+            }
+
+            // Get current session for the logged-in user
+            const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+            if (sessionError) throw sessionError;
+
+            const user = session?.user;
+
+            if (user) {
+                // Update user metadata with new image URL
+                const { error: updateError } = await supabase.auth.updateUser({
+                    data: { userImage: publicUrl }
+                });
+
+                if (updateError) {
+                    throw updateError;
+                }
+
+                setUserImage(publicUrl);
+                Alert.alert('Success', 'Your profile image has been updated.');
+            }
+        } catch (error) {
+            Alert.alert('Error', `Something went wrong: ${error.message}`);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleLogout = async () => {
         try {
             const { error } = await supabase.auth.signOut();
             if (error) throw error;
 
-            // Navigate to the login screen or any other appropriate action
-            navigation.navigate('login');
+            Alert.alert('Logout successful', 'You have been logged out successfully.');
+            navigate('login');
         } catch (error) {
-            console.error('Logout error:', error.message);
-            // Optionally show an error message to the user
+            Alert.alert('Logout error', `Logout error: ${error.message}`);
         }
     };
 
@@ -76,88 +159,72 @@ const ProfileScreen = () => {
         setLoading(true);
 
         if (password !== confirmPassword) {
-            Alert.alert('Passwords do not match', 'Please make sure both passwords match.');
+            Alert.alert('Update error', 'Passwords do not match. Please try again.');
             setLoading(false);
             return;
         }
 
         try {
-            // Assuming 'username' and 'password' can be updated
             const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-            
             if (sessionError) throw sessionError;
-            
+
             const user = session?.user;
-            
             if (user) {
-                // Update username
-                const { error: updateError } = await supabase
-                    .from('users') // Ensure this matches your table name
-                    .update({ username })
-                    .eq('id', user.id);
+                let updateData = { username };
+                if (password) {
+                    await supabase.auth.updateUser({ password });
+                }
+
+                const { error: updateError } = await supabase.auth.updateUser({
+                    data: updateData,
+                });
 
                 if (updateError) throw updateError;
 
-                // Update password
-                if (password) {
-                    const { error: authError } = await supabase.auth.updateUser({ password });
-
-                    if (authError) throw authError;
-                }
-
-                // Handle successful update
-                // Optionally show a success message to the user
                 Alert.alert('Profile updated', 'Your profile has been updated successfully.');
             }
         } catch (error) {
-            console.error('Update error:', error.message);
-            // Optionally show an error message to the user
+            Alert.alert('Update error', `Update error: ${error.message}`);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={styles.container}
-        >
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollView}>
-                {/* Back Button */}
                 <View style={styles.backButton}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => { navigate('home') }}>
                         <Image source={require('assets/backbuttonprofilescreen.png')} />
                     </TouchableOpacity>
                 </View>
 
-                {/* Profile Title */}
                 <View style={styles.profileTitle}>
                     <Text style={styles.profileTitleText}>Profile</Text>
                 </View>
 
                 {/* Profile Picture */}
                 <View style={styles.fotoProfile}>
-                    <Image source={require('assets/profilefoto.png')} style={styles.profileImage} />
-                    <TouchableOpacity style={styles.changePhotoButton}>
+                    <Image source={userImage ? { uri: userImage } : require('assets/profilefoto.png')} style={styles.profileImage} />
+                    <TouchableOpacity style={styles.changePhotoButton} onPress={handleImageSelection}>
                         <Image source={require('assets/buttonfotoprofile.png')} />
                     </TouchableOpacity>
                 </View>
 
-                {/* Input Fields */}
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Username</Text>
                     <TextInput
                         style={styles.input}
                         value={username}
                         onChangeText={setUsername}
-                        editable={!loading} // Make sure fields are not editable while loading
+                        editable={!loading}
                     />
 
                     <Text style={styles.label}>Email</Text>
                     <TextInput
                         style={styles.input}
                         value={email}
-                        editable={false} // Email field is read-only
+                        editable={false}
                     />
 
                     <Text style={styles.label}>Password</Text>
@@ -173,11 +240,7 @@ const ProfileScreen = () => {
                             style={styles.eyeIcon}
                             onPress={() => setPasswordVisible(!passwordVisible)}
                         >
-                            <Ionicons
-                                name={passwordVisible ? "eye-outline" : "eye-off-outline"}
-                                size={24}
-                                color="#888"
-                            />
+                            <Ionicons name={passwordVisible ? "eye-outline" : "eye-off-outline"} size={24} color="#888" />
                         </TouchableOpacity>
                     </View>
 
@@ -194,11 +257,7 @@ const ProfileScreen = () => {
                             style={styles.eyeIcon}
                             onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
                         >
-                            <Ionicons
-                                name={confirmPasswordVisible ? "eye-outline" : "eye-off-outline"}
-                                size={24}
-                                color="#888"
-                            />
+                            <Ionicons name={confirmPasswordVisible ? "eye-outline" : "eye-off-outline"} size={24} color="#888" />
                         </TouchableOpacity>
                     </View>
 
@@ -207,7 +266,6 @@ const ProfileScreen = () => {
                     </TouchableOpacity>
                 </View>
 
-                {/* Logout Button */}
                 <View style={styles.logoutButton}>
                     <TouchableOpacity onPress={handleLogout}>
                         <Image source={require('assets/logout.png')} />
@@ -251,7 +309,7 @@ const styles = StyleSheet.create({
         borderRadius: 50,
     },
     changePhotoButton: {
-        marginTop: -15,
+        marginTop: -5,
     },
     inputContainer: {
         width: '90%',
