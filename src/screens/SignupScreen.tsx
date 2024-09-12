@@ -14,11 +14,9 @@ import {
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
-import { useNavigation } from '@react-navigation/native';
 import { supabase } from '@/utils/supabase';
 
-const SignupScreen: React.FC = () => {
-  const navigation = useNavigation();
+const SignupScreen = ({ navigation: { navigate } }) => {
   const translateY = useSharedValue(0);
   const [tapped, setTapped] = useState(false);
   const [username, setUsername] = useState('');
@@ -58,7 +56,7 @@ const SignupScreen: React.FC = () => {
         password,
       });
       if (error) throw error;
-      navigation.navigate('login');
+      navigate('login');
     } catch (error) {
       setError(error.message);
     } finally {
@@ -73,7 +71,7 @@ const SignupScreen: React.FC = () => {
         <Image style={styles.imageLogo} source={require('assets/img1.png')} />
         
         <Animated.View style={[styles.animatedContainer, { width: width * 0.9, height: height * 0.75 }, animatedStyles]}>
-          <TouchableOpacity onPress={() => { navigation.goBack(); }}>
+          <TouchableOpacity onPress={() => { navigate }}>
             <Image style={styles.goBackImage} source={require('assets/img2.png')} />
           </TouchableOpacity>
           

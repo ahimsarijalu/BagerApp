@@ -19,7 +19,6 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-na
 import { supabase } from "@/utils/supabase";
 
 const LoginScreen = ({ navigation: { navigate } }) => {
-  const navigation = useNavigation();
   const translateY = useSharedValue(0);
   const [tapped, setTapped] = useState(false);
   const [email, setEmail] = useState('');
@@ -60,7 +59,7 @@ const LoginScreen = ({ navigation: { navigate } }) => {
         password,
       });
       if (error) throw error;
-      navigation.navigate("home");
+      navigate("home");
     } catch (error) {
       setError(error.message);
     } finally {

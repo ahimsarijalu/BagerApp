@@ -4,7 +4,6 @@ import { Avatar, Button } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Guide from "@/components/Guide";
 import GuideCover from "@/components/GuideCover";
-import { useNavigation } from "@react-navigation/native";
 
 const guides = [
   {
@@ -40,11 +39,7 @@ const guides = [
 ];
 
 const HomeScreen = ({ navigation: { navigate } }) => {
-  const navigation = useNavigation();
 
-  function goToPlayScreen() {
-    navigate("playScreen");
-  }
 
   return (
     <View>
@@ -54,7 +49,7 @@ const HomeScreen = ({ navigation: { navigate } }) => {
       </Text>
       <View style={styles.header}>
         <View style={styles.profile}>
-          <TouchableOpacity onPress={() => navigation.navigate('profile')}>
+          <TouchableOpacity onPress={() => navigate('profile')}>
             <Avatar.Image size={48} source={require('assets/profilePic.png')} />
           </TouchableOpacity>
           <View style={styles.profileInfo}>
