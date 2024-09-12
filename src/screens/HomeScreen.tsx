@@ -1,12 +1,12 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions } from "react-native";
 import { Avatar, Button } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Guide from "@/components/Guide";
 import GuideCover from "@/components/GuideCover";
-import { useNavigation } from "@react-navigation/native";
 import Swiper from "react-native-web-swiper";
 import colors from "@/theme/Colors";
+import { supabase } from "@/utils/supabase";
 
 const guides = [
   {
@@ -43,11 +43,49 @@ const guides = [
 
 const { width } = Dimensions.get("window");
 
-const HomeScreen = () => {
-  const navigation = useNavigation();
+const HomeScreen = ({ navigation: { navigate } }) => {
+  const [userImage, setUserImage] = useState(null);
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');  
+  const [loading, setLoading] = useState(true);
+  const [score, setScore] = useState('');
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+        try {
+            const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+            
+            if (sessionError) throw sessionError;
+            
+            const user = session?.user;
+            
+            if (user) {
+                console.log('User ID:', user.id);
+
+                // Fetch user details from the auth system
+                const { data, error } = await supabase.auth.getUser();
+
+                if (error) {
+                    console.error('Error fetching user data:', error.message);
+                } else {
+                    setUsername(data.user?.user_metadata?.username || 'No username');
+                    setEmail(data.user?.email || 'No email');
+                    setUserImage(data.user?.user_metadata?.userImage || 'No userImage');
+                    setScore(data.user?.user_metadata?.score || '0');
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching user profile:', error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    fetchUserProfile();
+}, []);  
 
   function goToPlayScreen() {
-    navigation.navigate("playScreen");
+    navigate("playScreen");
   }
 
   return (
@@ -58,15 +96,17 @@ const HomeScreen = () => {
       </Text>
       <View style={styles.header}>
         <View style={styles.profile}>
-          <TouchableOpacity onPress={() => navigation.navigate("profile")}>
-            <Avatar.Image size={48} source={require("assets/profilePic.png")} />
+          <TouchableOpacity onPress={() => navigate("profile")}>
+            <Avatar.Image size={48} source={userImage ? {uri: userImage} : require("assets/profilePic.png")} />
           </TouchableOpacity>
           <View style={styles.profileInfo}>
-            <Text style={styles.name}>Prima Gaul</Text>
-            <Text style={styles.points}>2890 points</Text>
+            <Text style={styles.name}>{username ? username : "Prima Gaul"}</Text>
+            <Text style={styles.points}>{score ? score : "Prima Gaul"} points</Text>
           </View>
         </View>
-        <Image source={require("assets/juara.png")} style={styles.trophy} />
+        <TouchableOpacity onPress={() => navigate("leaderboard")}>
+          <Image source={require("assets/juara.png")} style={styles.trophy} />
+        </TouchableOpacity>
       </View>
 
       {/* Swiper for guides */}
