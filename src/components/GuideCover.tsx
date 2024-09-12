@@ -1,7 +1,6 @@
+import React from "react";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { Image } from "expo-image";
-
-import React from "react";
 import GuideType from "@/types/GuideType";
 
 const blurhash =
@@ -24,15 +23,18 @@ const GuideCover = ({ image, title }: GuideType) => {
 
 export default GuideCover;
 
-const width = Dimensions.get("screen").width;
+const { width } = Dimensions.get("window");
+
 const styles = StyleSheet.create({
   container: {
     padding: 24,
-    margin: 16,
+    marginHorizontal: (width - 300) / 2, // Horizontal margin to center the card
+    marginVertical: 16,
     backgroundColor: "white",
     borderRadius: 20,
     minHeight: 400,
-    width: width - 100,
+    width: 300, // Fixed width to make the card centered
+    justifyContent: "center", // Align content to the center
   },
   image: {
     flex: 1,
@@ -45,7 +47,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "600",
     textAlign: "center",
-    marginTop: 8
+    marginTop: 8,
   },
-  content: {},
 });

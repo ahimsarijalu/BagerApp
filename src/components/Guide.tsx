@@ -1,13 +1,11 @@
-import { StyleSheet, Text, View, Dimensions } from "react-native";
+import { StyleSheet, Text, View, ScrollView, Dimensions } from "react-native";
 import React from "react";
-import GuideType from "@/types/GuideType";
 import { Image } from "expo-image";
 import GuideContentItem from "./GuideContentItem";
 
-const blurhash =
-  "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+const blurhash = "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
-const Guide = ({ image, title, content, index }: GuideType) => {
+const Guide = ({ image, title, content, index }) => {
   return (
     <View style={styles.container}>
       <Image
@@ -18,24 +16,23 @@ const Guide = ({ image, title, content, index }: GuideType) => {
         transition={1000}
       />
       <Text style={styles.title}>{title}</Text>
-      <View>
-        {content.map((guide, i) => {
-          return (
-            <GuideContentItem
-              key={i}
-              text={guide}
-              index={index != null ? i + 1 : null}
-            />
-          );
-        })}
-      </View>
+      <ScrollView style={styles.scrollView}>
+        {content.map((guide, i) => (
+          <GuideContentItem
+            key={i}
+            text={guide}
+            index={index != null ? i + 1 : null}
+          />
+        ))}
+      </ScrollView>
     </View>
   );
 };
 
 export default Guide;
 
-const width = Dimensions.get("screen").width;
+const { width } = Dimensions.get("screen");
+
 const styles = StyleSheet.create({
   container: {
     padding: 24,
@@ -43,7 +40,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
     backgroundColor: "white",
     borderRadius: 20,
-    width: width - 100,
+    width: width * 0.8, // Set width to 80% of the screen width for better centering
+    alignSelf: 'center', // Centers the card
+    height: 400, // Fixed height to constrain content
   },
   image: {
     flex: 1,
@@ -57,8 +56,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
-  content: {
-    marginLeft: 8,
+  scrollView: {
+    flex: 1,
     marginTop: 8,
   },
 });

@@ -21,12 +21,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   indicator: {
-    width: 20,
+    width: 24, // Increased width for numbered items
     textAlign: "right",
-    paddingRight: 5,
+    paddingRight: 8, // More space between the bullet/number and text
+    fontSize: 16,
+    fontWeight: "600",
   },
   text: {
     flex: 1,
-    paddingLeft: 5,
+    paddingLeft: 10,
+    fontSize: 16,
+    lineHeight: 24, // Better spacing for readability
   },
 });

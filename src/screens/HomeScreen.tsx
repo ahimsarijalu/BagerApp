@@ -1,10 +1,12 @@
-import colors from "@/theme/Colors";
-import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from "react-native";
+import React from "react";
+import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions } from "react-native";
 import { Avatar, Button } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Guide from "@/components/Guide";
 import GuideCover from "@/components/GuideCover";
 import { useNavigation } from "@react-navigation/native";
+import Swiper from "react-native-web-swiper";
+import colors from "@/theme/Colors";
 
 const guides = [
   {
@@ -39,67 +41,68 @@ const guides = [
   },
 ];
 
-const HomeScreen = ({ navigation: { navigate } }) => {
+const { width } = Dimensions.get("window");
+
+const HomeScreen = () => {
   const navigation = useNavigation();
 
   function goToPlayScreen() {
-    navigate("playScreen");
+    navigation.navigate("playScreen");
   }
 
   return (
-    <View>
+    <View style={styles.container}>
       <Text style={styles.greetings}>
         <Text style={styles.hello}>Hello there! </Text>
-        <Text>Dive in and have fun playing!</Text>
+        Dive in and have fun playing!
       </Text>
       <View style={styles.header}>
         <View style={styles.profile}>
-          <TouchableOpacity onPress={() => navigation.navigate('profile')}>
-            <Avatar.Image size={48} source={require('assets/profilePic.png')} />
+          <TouchableOpacity onPress={() => navigation.navigate("profile")}>
+            <Avatar.Image size={48} source={require("assets/profilePic.png")} />
           </TouchableOpacity>
           <View style={styles.profileInfo}>
             <Text style={styles.name}>Prima Gaul</Text>
             <Text style={styles.points}>2890 points</Text>
           </View>
         </View>
-        <View>
-          <Image source={require("assets/juara.png")}></Image>
-        </View>
+        <Image source={require("assets/juara.png")} style={styles.trophy} />
       </View>
-      <ScrollView horizontal={true} style={{ minHeight: 400 }}>
+
+      {/* Swiper for guides */}
+      <Swiper
+        loop
+        timeout={3} // Autoplay every 3 seconds
+        containerStyle={styles.swiper}
+        controlsProps={{
+          dotsTouchable: true,
+          prevPos: "left",
+          nextPos: "right",
+          nextTitle: ">",
+          nextTitleStyle: { color: colors.totalPoints, fontSize: 24, fontWeight: "bold" },
+          prevTitle: "<",
+          prevTitleStyle: { color: colors.totalPoints, fontSize: 24, fontWeight: "bold" },
+        }}
+      >
         {guides.map((guide, index) =>
           index === 0 ? (
             <GuideCover key={index} image={guide.image} title={guide.title} />
-          ) : index === 2 ? (
-            <Guide
-              key={index}
-              image={guide.image}
-              title={guide.title}
-              content={guide.content}
-              index={index}
-            />
           ) : (
-            <Guide
-              key={index}
-              image={guide.image}
-              title={guide.title}
-              content={guide.content}
-            />
+            <Guide key={index} image={guide.image} title={guide.title} content={guide.content} index={undefined} />
           )
         )}
-      </ScrollView>
+      </Swiper>
+
       <View style={styles.buttonContainer}>
         <Button
-          mode="elevated"
+          mode="contained"
           style={styles.playButton}
-          buttonColor="white"
-          textColor={colors.totalPoints}
-          icon={() => (
-            <Ionicons name="play" size={36} color={colors.totalPoints} />
-          )}
-          onPress={() => navigate('playScreen')}
+          contentStyle={styles.playButtonContent}
+          labelStyle={styles.buttonText}
+          onPress={goToPlayScreen}
+          icon={() => <Ionicons name="play" size={24} color={colors.totalPoints} />}
         >
-          <Text style={styles.buttonText}>Start Game</Text>
+          Start Game
         </Button>
       </View>
     </View>
@@ -107,58 +110,70 @@ const HomeScreen = ({ navigation: { navigate } }) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#f0f0f0", // Light background for better contrast
+  },
   greetings: {
     fontWeight: "700",
     fontSize: 20,
-    justifyContent: "center",
     textAlign: "center",
-    marginTop: 64,
+    marginTop: 40,
   },
   hello: {
     color: colors.totalPoints,
   },
   header: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 24,
-    marginHorizontal: 36,
-    marginBottom: 24,
+    alignItems: "center",
+    marginTop: 20,
+    marginHorizontal: 16,
   },
   profile: {
     flexDirection: "row",
+    alignItems: "center",
   },
   profileInfo: {
-    marginLeft: 16,
+    marginLeft: 12,
   },
   name: {
     fontWeight: "700",
-    fontSize: 20,
+    fontSize: 18,
   },
   points: {
-    fontWeight: "400",
     fontSize: 14,
+    color: "gray",
   },
-  guide: {
-    margin: 8,
+  trophy: {
+    width: 50,
+    height: 50,
+    resizeMode: "contain",
+  },
+  swiper: {
+    height: 400, // Adjust as needed
   },
   buttonContainer: {
-    marginTop: 12,
+    alignItems: "center",
+    marginVertical: 20,
   },
   playButton: {
-    marginHorizontal: 90,
-    shadowColor: colors.totalPoints,
-    shadowOpacity: 0.4,
-    height: 250,
-    borderRadius: 48,
-    justifyContent: "center",
-    alignContent: "center",
-    marginBottom: 8,
+    width: width * 0.8, // 80% of the screen width for responsiveness
+    borderRadius: 24,
+    backgroundColor: "white",
+    elevation: 4, // Android shadow
+    shadowColor: "#000", // iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+  },
+  playButtonContent: {
+    paddingVertical: 12,
   },
   buttonText: {
-    flex: 1,
-    fontSize: 20,
-    fontWeight: "700",
+    fontSize: 16,
+    fontWeight: "bold",
+    color: colors.totalPoints,
   },
 });
 
