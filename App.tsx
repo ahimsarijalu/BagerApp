@@ -8,7 +8,8 @@ import LoginScreen from "@/screens/LoginScreen";
 import HomeScreen from "@/screens/HomeScreen";
 import PlayScreen from "@/screens/PlayScreen";
 import ProfileScreen from "@/screens/ProfileScreen";
-
+import PlaySettings from "@/screens/PlaySettings";
+import LeaderboardScreen from "@/screens/LeaderboardScreen";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -23,20 +24,30 @@ export default function App() {
               headerShown: false,
               presentation: 'fullScreenModal',
               animationTypeForReplace: 'push',
-              animation:'slide_from_right'
+              animation:'ios'
             }}
           />
-          {/* <Stack.Screen
-            name="profile"
-            component={ProfileScreen}
+          <Stack.Screen
+            name="playsetting"
+            component={PlaySettings}
             options={{ 
               headerShown: false,
               presentation: 'modal',
               animationTypeForReplace: 'push',
-              animation:'slide_from_right'
+              animation:'ios',
             }}
             
-          /> */}
+          />
+          <Stack.Screen
+            name="leaderboard"
+            component={LeaderboardScreen}
+            options={{ 
+              headerShown: false,
+              presentation: 'containedModal',
+              animationTypeForReplace: 'push',
+              animation:'ios'
+            }}
+          />
           <Stack.Screen
             name="home"
             component={HomeScreen}

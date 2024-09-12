@@ -1,12 +1,16 @@
 import React, { useEffect } from 'react';
-import { View, Text, ScrollView, Image, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, Dimensions } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchLeaderboard } from '@/redux/leaderboardSlice';
 import { RootState } from '../redux/store';
 import { Ionicons } from '@expo/vector-icons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { LinearGradient } from 'expo-linear-gradient';
+import GestureRecognizer from 'react-native-swipe-gestures';
+import { useNavigation } from '@react-navigation/native';
 
 const LeaderboardScreen = () => {
+  const navigation = useNavigation();
   const dispatch = useDispatch();
   const leaderboard = useSelector((state: RootState) => state.leaderboard);
 
@@ -14,46 +18,62 @@ const LeaderboardScreen = () => {
     dispatch(fetchLeaderboard());
   }, [dispatch]);
 
-  const top3Leaderboard = leaderboard.slice(0, 3); // Top 3 users
+  const top3Leaderboard = leaderboard.length >= 3 
+  ? [leaderboard[1], leaderboard[0], leaderboard[2]] 
+  : [];
   const remainingLeaderboard = leaderboard.slice(3, 10); // Remaining 4-10 users
 
   return (
     <View style={styles.container}>
-      {/* User Rank Banner */}
-      <View style={styles.userRankContainer}>
-        <Text style={styles.userRankText}>You're ranked #209!</Text>
-        <Text style={styles.userPoints}>40 Points</Text>
-        <Text style={styles.userMessage}>
-          Play again and climb your way to the top!
-        </Text>
-      </View>
+      <GestureRecognizer onSwipeDown={() => navigation.goBack()}>
+        {/* User Rank Banner */}
+        <View style={styles.userRankContainer}>
+          <Text style={styles.userRankText}>You're ranked #209!</Text>
+          <Text style={styles.userPoints}>40 Points</Text>
+          <Text style={styles.userMessage}>
+            Play again and climb your way to the top!
+          </Text>
+        </View>
+      </GestureRecognizer>
 
       <ScrollView contentContainerStyle={styles.scrollView}>
         {/* Top 3 Leaderboard */}
         <View style={styles.top3Container}>
           {top3Leaderboard.map((user, index) => {
-            const rankColor = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? '#CD7F32' : 'transparent';
-            
+            // Adjust podium heights: 1st in the middle is highest, 2nd on left, 3rd on right
+            const podiumHeight = index === 1 ? 220 : index === 0 ? 180 : 140; // Left podium (2nd), Middle podium (1st), Right podium (3rd)
+            const rankColor = index === 1 ? 'gold' : index === 0 ? 'silver' : '#CD7F32';
+
             return (
-              <View key={index} style={styles.topUserContainer}>
-                <MaterialCommunityIcons
-                  name="crown"
-                  size={24}
-                  color={rankColor}
-                />
-                <Image
-                  source={{ uri: user.image }}
-                  style={[styles.topAvatar, { borderColor: rankColor }]}
-                />
-                <Text style={[styles.topRank, { color: rankColor }]}>{index + 1}</Text>
-                <Text style={styles.topName}>{user.name}</Text>
-                <Text style={styles.topPoints}>{user.points} Points</Text>
-              </View>
+              <LinearGradient
+                key={index}
+                colors={['#5BD1DE', '#5BD1DE', 'white']}
+                locations={[0, 0.7, 1]}
+                style={[styles.top3ContainerUpper, { height: podiumHeight }]}
+              >
+                <View style={{ alignItems: 'center', position: 'absolute', top: -90 }}>
+                  <MaterialCommunityIcons
+                    name="crown"
+                    size={30}
+                    color={rankColor}
+                    style={{ marginBottom: 5 }}
+                  />
+                  <Image
+                    source={{ uri: user.image }}
+                    style={[styles.topAvatar, { borderColor: rankColor }]}
+                  />
+                  <Text style={styles.topName}>{user.name}</Text>
+                  <Text style={styles.topPoints}>{user.points} Points</Text>
+                </View>
+
+                {/* Rank Number (centered in the podium) */}
+                <Text style={[styles.topRank, { top: podiumHeight / 2 - 16 }]}>
+                  {index === 1 ? 1 : index === 0 ? 2 : 3}
+                </Text>
+              </LinearGradient>
             );
           })}
         </View>
-
-
 
         {/* Remaining Leaderboard */}
         {remainingLeaderboard.map((user, index) => (
@@ -77,9 +97,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#EFFBFC',
+    paddingHorizontal: 10, // Responsive padding for mobile
+    paddingTop: 60 //ios
   },
   scrollView: {
-    paddingHorizontal: 20,
     paddingBottom: 20,
   },
   userRankContainer: {
@@ -100,40 +121,57 @@ const styles = StyleSheet.create({
   userPoints: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#37FD12',
+    color: '#ffffff',
     marginTop: 5,
   },
   userMessage: {
     fontSize: 14,
     color: 'white',
     marginTop: 5,
+    textAlign: 'center', // Ensure readability on all screens
   },
   top3Container: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 20,
+    justifyContent: 'space-around', // Ensure podiums are spaced evenly
+    alignItems: 'flex-end',
+    height: 250,
+    marginTop: 50,
   },
-  topUserContainer: {
+  top3ContainerUpper: {
+    width: '28%',
+    backgroundColor: '#f0f0f0',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    justifyContent: 'flex-end',
+    paddingBottom: 20,
     alignItems: 'center',
+    position: 'relative',
   },
   topAvatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginBottom: 10,
-    borderWidth: 3, // Adds the border
-  },
-  topRank: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 3,
+    marginBottom: 5,
   },
   topName: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
+    textAlign: 'center',
+    marginVertical: 3,
   },
   topPoints: {
     fontSize: 14,
-    color: '#888',
+    color: '#ffffff',
+    textAlign: 'center',
+    marginBottom: 50
+  },
+  topRank: {
+    fontSize: 50,
+    fontWeight: 'bold',
+    position: 'absolute',
+    color: 'white',
+    marginTop: 20
   },
   leaderboardItem: {
     flexDirection: 'row',

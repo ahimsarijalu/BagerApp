@@ -26,10 +26,14 @@ const HomeScreen = ({route}) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState({});
+  const [score, setScore] = useState(0);
   const [email, setEmail] = useState("");
+  const [userID, setUserID] = useState(0);
   const [tapped, setTapped] = useState(false);
   const translateY = useSharedValue(0);
   const [modalVisible, setModalVisible] = useState(false);
+
+
   const guideScreens = [
     guide0,
     guide1,
@@ -76,6 +80,7 @@ const HomeScreen = ({route}) => {
           .select("*")
           .like('email',"%"+route.params.email+"%");
           setUserData(data[0]);
+          setUserID(data[0].id);
           setEmail(data[0].email);
         } else {
           let { data, error } = await supabase
@@ -95,8 +100,27 @@ const HomeScreen = ({route}) => {
       }
   }
 
-  const flagProfileData = (data) => {
-    return data;
+  const pointActive = async() => {
+      try {
+        setLoading(true)
+        
+        if (userData){
+          let { data, error } = await supabase
+          .from('leaderboard')
+          .select("*")
+          .eq('id_user',userID);   
+          if (data){
+            setScore(data[0].score);
+          }
+          
+}
+      } catch (error) {
+        if (error instanceof Error) {
+          Alert.alert(error.message)
+        }
+      } finally {
+        setLoading(false)
+      }
   }
 
   return (
@@ -116,10 +140,12 @@ const HomeScreen = ({route}) => {
         </View>
         <View style={[styles.profileInfo, { flex: 3 }]}>
           <Text style={styles.name}>{userData.name}</Text>
-          <Text style={styles.points}>2890 points</Text>
+          <Text style={styles.points}>{score} points</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Image source={require("assets/juara.png")}></Image>
+          <TouchableOpacity style={{right: -20}} onPress={() => {navigation.navigate('leaderboard')}}>
+            <Image source={require("assets/juara.png")}></Image>
+          </TouchableOpacity>
         </View>
       </View>
       <View style={{flex: 1, marginVertical: 20, alignItems: "center"}}>
@@ -142,7 +168,7 @@ const HomeScreen = ({route}) => {
             />
       </View>
       <View style={{flex:1, flexDirection:"column", margin: 20, top: 100, alignItems: "center"}}>
-        <TouchableOpacity style={{padding: 10, borderRadius: 15}} onPress={() => {navigation.navigate('playScreen')}}>
+        <TouchableOpacity style={{padding: 10, borderRadius: 15}} onPress={() => {pointActive();navigation.navigate('playsetting')}}>
                 <FadeIn>
                   <Image source={playImgBtn}></Image>
                 </FadeIn>
@@ -207,8 +233,10 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 20,
     width: 200,
+    color: "white",
   },
   points: {
+    color: "white",
     fontWeight: "400",
     fontSize: 12,
   },

@@ -130,7 +130,7 @@ const LoginScreen = () => {
           </View>
 
           <View style={styles.googleContainer}>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => {
                 alert("Google Auth");
               }}
@@ -139,7 +139,7 @@ const LoginScreen = () => {
                 style={styles.googleIcon}
                 source={require("assets/image_29.png")}
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
 
           <TouchableOpacity style={styles.button} onPress={() => signInWithEmail()}>
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   googleContainer: {
-    marginBottom: 10,
+    marginBottom: 50,
     alignItems: "center",
   },
   googleIcon: {
