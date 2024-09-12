@@ -61,6 +61,11 @@ export default function App() {
             component={ProfileScreen}
             options={{ headerShown: false }}
           />
+          <Stack.Screen
+            name="leaderboard"
+            component={LeaderboardScreen}
+            options={{ headerShown: false }}
+          />          
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

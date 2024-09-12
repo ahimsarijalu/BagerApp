@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchLeaderboard } from '@/redux/leaderboardSlice';
 import { RootState } from '../redux/store';
@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const LeaderboardScreen = () => {
+const LeaderboardScreen = ({ navigation: { navigate } }) => {
   const dispatch = useDispatch();
   const leaderboard = useSelector((state: RootState) => state.leaderboard);
 
@@ -22,6 +22,13 @@ const LeaderboardScreen = () => {
 
   return (
     <View style={styles.container}>
+      {/* Back Button */}
+      <View style={styles.backButton}>
+          <TouchableOpacity onPress={() => { navigate('home') }}>
+              <Image source={require('assets/backbuttonprofilescreen.png')} />
+          </TouchableOpacity>
+      </View>
+
       {/* User Rank Banner */}
       <View style={styles.userRankContainer}>
         <Text style={styles.userRankText}>You're ranked #209!</Text>
@@ -207,6 +214,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#888',
   },
+  backButton: {
+    marginTop: 45,
+    alignSelf: 'flex-start',
+    marginLeft: 20,
+},  
 });
 
 export default LeaderboardScreen;
