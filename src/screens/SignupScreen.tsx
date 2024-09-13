@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,19 +11,23 @@ import {
   Platform,
   KeyboardAvoidingView,
   useWindowDimensions,
-  Alert
-} from 'react-native';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
-import { supabase } from '@/utils/supabase';
+  Alert,
+} from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
+import { supabase } from "@/utils/supabase";
 
 const SignupScreen = ({ navigation: { navigate } }) => {
   const translateY = useSharedValue(0);
   const [tapped, setTapped] = useState(false);
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [securePassword, setSecurePassword] = useState(true);
   const [secureConfirmPassword, setSecureConfirmPassword] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -32,14 +36,20 @@ const SignupScreen = ({ navigation: { navigate } }) => {
   const { width, height } = useWindowDimensions();
 
   const animatedStyles = useAnimatedStyle(() => ({
-    transform: [{ translateY: !tapped ? withTiming(translateY.value + 0) : withTiming(translateY.value - 160) }],
+    transform: [
+      {
+        translateY: !tapped
+          ? withTiming(translateY.value + 0)
+          : withTiming(translateY.value - 160),
+      },
+    ],
   }));
 
   useEffect(() => {
-    const upp = Keyboard.addListener('keyboardDidShow', () => {
+    const upp = Keyboard.addListener("keyboardDidShow", () => {
       setTapped(true);
     });
-    const down = Keyboard.addListener('keyboardDidHide', () => {
+    const down = Keyboard.addListener("keyboardDidHide", () => {
       setTapped(false);
     });
     return () => {
@@ -53,58 +63,86 @@ const SignupScreen = ({ navigation: { navigate } }) => {
     setError(null);
 
     try {
-        // Fetch a random user image
-        const response = await fetch("https://randomuser.me/api/");
-        const { results } = await response.json();
-        const randomUserImage = results[0].picture.large; // Get portrait image
+      // Fetch a random user image
+      const response = await fetch("https://randomuser.me/api/");
+      const { results } = await response.json();
+      const randomUserImage = results[0].picture.large; // Get portrait image
 
-        // Proceed with signup and use the random image
-        const { error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                data: {
-                    username: username,
-                    userImage: randomUserImage, // Add the random image to the user data
-                    score: 0
-                },
-            },
-        });
+      // Proceed with signup and use the random image
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            username: username,
+            userImage: randomUserImage, // Add the random image to the user data
+            score: 0,
+          },
+        },
+      });
 
-        if (error) throw error;
+      if (error) throw error;
 
-        // Show success message
-        const successMessage = 'Signup successful. Please check your email to verify your account.';
-        Alert.alert('Signup successful', successMessage); // For mobile
-        if (typeof window !== 'undefined') alert(successMessage); // For web
+      // Show success message
+      const successMessage =
+        "Signup successful. Please check your email to verify your account.";
+      Alert.alert("Signup successful", successMessage); // For mobile
+      if (typeof window !== "undefined") alert(successMessage); // For web
 
-        navigate('login');
+      const { error: insertError } = await supabase
+        .from("score")
+        .insert({ score: 0 });
+      if (insertError) {
+        console.log(insertError);
+      }
+
+      navigate("login");
     } catch (error) {
-        setError(error.message);
+      setError(error.message);
 
-        // Show error message
-        const errorMessage = `Signup error: ${error.message}`;
-        Alert.alert('Signup error', errorMessage); // For mobile
-        if (typeof window !== 'undefined') alert(errorMessage); // For web
+      // Show error message
+      const errorMessage = `Signup error: ${error.message}`;
+      Alert.alert("Signup error", errorMessage); // For mobile
+      if (typeof window !== "undefined") alert(errorMessage); // For web
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
-
-  
+  };
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-      <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
-        <Image style={styles.imageLogo} source={require('assets/img1.png')} />
-        
-        <Animated.View style={[styles.animatedContainer, { width: width * 0.9, height: height * 0.75 }, animatedStyles]}>
-          <TouchableOpacity onPress={() => { navigate('login') }}>
-            <Image style={styles.goBackImage} source={require('assets/img2.png')} />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      style={{ flex: 1 }}
+    >
+      <ScrollView
+        scrollEnabled={false}
+        contentContainerStyle={styles.container}
+      >
+        <Image style={styles.imageLogo} source={require("assets/img1.png")} />
+
+        <Animated.View
+          style={[
+            styles.animatedContainer,
+            { width: width * 0.9, height: height * 0.75 },
+            animatedStyles,
+          ]}
+        >
+          <TouchableOpacity
+            onPress={() => {
+              navigate("login");
+            }}
+          >
+            <Image
+              style={styles.goBackImage}
+              source={require("assets/img2.png")}
+            />
           </TouchableOpacity>
-          
+
           <Text style={styles.title}>Join the battle!</Text>
-          <Text style={styles.subtitle}>Create your account now and dive into the classic game of strategy and luck.</Text>
+          <Text style={styles.subtitle}>
+            Create your account now and dive into the classic game of strategy
+            and luck.
+          </Text>
 
           <TextInput
             placeholder="Username"
@@ -129,8 +167,11 @@ const SignupScreen = ({ navigation: { navigate } }) => {
               value={password}
               onChangeText={setPassword}
             />
-            <TouchableOpacity onPress={() => setSecurePassword(!securePassword)} style={styles.eyeIcon}>
-              <Ionicons name='eye-outline' size={24} />
+            <TouchableOpacity
+              onPress={() => setSecurePassword(!securePassword)}
+              style={styles.eyeIcon}
+            >
+              <Ionicons name="eye-outline" size={24} />
             </TouchableOpacity>
           </View>
 
@@ -142,15 +183,18 @@ const SignupScreen = ({ navigation: { navigate } }) => {
               value={confirmPassword}
               onChangeText={setConfirmPassword}
             />
-            <TouchableOpacity onPress={() => setSecureConfirmPassword(!secureConfirmPassword)} style={styles.eyeIcon}>
-              <Ionicons name='eye-outline' size={24} />
+            <TouchableOpacity
+              onPress={() => setSecureConfirmPassword(!secureConfirmPassword)}
+              style={styles.eyeIcon}
+            >
+              <Ionicons name="eye-outline" size={24} />
             </TouchableOpacity>
           </View>
 
           {error && <Text style={styles.errorText}>{error}</Text>}
 
-          <TouchableOpacity 
-            style={styles.registerButton} 
+          <TouchableOpacity
+            style={styles.registerButton}
             onPress={handleSignup}
             disabled={loading}
           >
@@ -167,7 +211,7 @@ const SignupScreen = ({ navigation: { navigate } }) => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#5BD1DE',
+    backgroundColor: "#5BD1DE",
     paddingLeft: 20,
     paddingRight: 20,
     paddingTop: 70,
@@ -189,31 +233,31 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginTop: -15,
     marginLeft: -10,
   },
   subtitle: {
     fontSize: 18,
-    fontWeight: 'thin',
+    fontWeight: "thin",
     paddingTop: 5,
     marginLeft: -10,
     marginBottom: 30,
   },
   input: {
     height: 48,
-    borderColor: '#F4F4F4',
-    backgroundColor: '#F4F4F4',
+    borderColor: "#F4F4F4",
+    backgroundColor: "#F4F4F4",
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 16,
     marginBottom: 20,
   },
   passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderColor: '#F4F4F4',
-    backgroundColor: '#F4F4F4',
+    flexDirection: "row",
+    alignItems: "center",
+    borderColor: "#F4F4F4",
+    backgroundColor: "#F4F4F4",
     borderWidth: 1,
     borderRadius: 8,
     marginBottom: 16,
@@ -228,21 +272,21 @@ const styles = StyleSheet.create({
   },
   registerButton: {
     marginTop: 50,
-    backgroundColor: '#44c9e0',
+    backgroundColor: "#44c9e0",
     height: 48,
     borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 16,
   },
   registerButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   errorText: {
-    color: 'red',
-    textAlign: 'center',
+    color: "red",
+    textAlign: "center",
     marginBottom: 10,
   },
 });

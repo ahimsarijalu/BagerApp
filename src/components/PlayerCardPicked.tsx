@@ -6,7 +6,12 @@ export default function PlayerCardPicked({ cardName, image, color }) {
   return (
     <View>
       <Card style={styles.card}>
-        <Card.Cover style={{height: 300}} source={image} resizeMode="cover" width={100} height={300} />
+        <Card.Cover
+          source={image}
+          resizeMode='cover'
+          resizeMethod="resize"
+          
+        />
         <Card
           style={[styles.button, { backgroundColor: color }]}
           mode="contained"
@@ -17,7 +22,8 @@ export default function PlayerCardPicked({ cardName, image, color }) {
                 color: "white",
                 fontWeight: "bold",
                 fontSize: 24,
-                paddingHorizontal: 64
+                paddingHorizontal: 32,
+                maxWidth: 200
               }}
             >
               {cardName}
@@ -37,13 +43,11 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingHorizontal: 8,
     paddingBottom: 2,
-    width: 280
   },
   button: {
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 4,
     marginTop: 6,
-  
   },
 });

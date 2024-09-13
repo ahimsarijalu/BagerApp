@@ -13,7 +13,7 @@ const GuideCover = ({ image, title }: GuideType) => {
         style={styles.image}
         source={image}
         placeholder={{ blurhash }}
-        contentFit="cover"
+        contentFit="contain"
         transition={1000}
       />
       <Text style={styles.title}>{title}</Text>
@@ -28,24 +28,25 @@ const { width } = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     padding: 24,
-    marginHorizontal: (width - 300) / 2, // Horizontal margin to center the card
-    marginVertical: 16,
+    margin: 16,
+    marginTop: 8,
     backgroundColor: "white",
     borderRadius: 20,
-    minHeight: 400,
-    width: 300, // Fixed width to make the card centered
-    justifyContent: "center", // Align content to the center
+    width: width * 0.8, // Set width to 80% of the screen width for better centering
+    alignSelf: 'center', // Centers the card
+    // height: 400, // Fixed height to constrain content
+    minHeight: 600
   },
   image: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 24,
+    borderRadius: 16,
+    minHeight: 500,
   },
   title: {
     paddingVertical: 8,
-    fontSize: 24,
-    fontWeight: "600",
+    fontSize: 32,
+    fontWeight: "bold",
     textAlign: "center",
     marginTop: 8,
   },

@@ -55,7 +55,6 @@ const HomeScreen = ({ navigation: { navigate } }) => {
         try {
             const { data: { session }, error: sessionError } = await supabase.auth.getSession();
             
-            if (sessionError) throw sessionError;
             
             const user = session?.user;
             
@@ -169,6 +168,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 20,
     marginHorizontal: 16,
+    marginBottom: 16
   },
   profile: {
     flexDirection: "row",

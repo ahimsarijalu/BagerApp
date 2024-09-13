@@ -7,10 +7,10 @@ import Health from "@/components/Health";
 import Streak from "@/components/Streak";
 import PointsIncrement from "@/components/PointsIncrement";
 import colors from "@/theme/Colors";
-import Countdown from "@/components/Countdown";
 import PlayerCardPicked from "@/components/PlayerCardPicked";
 import PickedCardType from "@/types/PickedCard";
 import { supabase } from "@/utils/supabase";
+import TurnResult from "@/components/TurnResult";
 
 const choices = [
   {},
@@ -36,7 +36,8 @@ const PlayScreen = ({ navigation: { navigate } }) => {
   const [points, setPoints] = useState(0);
   const [streak, setStreak] = useState(0);
 
-  const [countdown, setCountdown] = useState(0);
+  const [result, setResult] = useState("");
+  const [isResultShown, setIsResultShown] = useState(false);
 
   const [incrementPoint, setIncrementPoint] = useState(0);
   const [isIncrementPointShown, setIsIncrementPointShown] = useState(false);
@@ -53,8 +54,7 @@ const PlayScreen = ({ navigation: { navigate } }) => {
 
   function handlePlayerPick(playerPicked: number) {
     setPlayer(playerPicked);
-    // const computer = Math.floor(Math.random() * 3) + 1;
-    const computer = 1;
+    const computer = Math.floor(Math.random() * 3) + 1;
     setComputer(computer);
   }
 
@@ -79,30 +79,41 @@ const PlayScreen = ({ navigation: { navigate } }) => {
 
   useEffect(() => {
     if (pickedCard && computerPickedCard) {
-      console.log("player: " + player + "  comp: " + computer);
-      console.log(handleWinner());
+      setResult(handleWinner());
+      setIsResultShown(true);
       setTimeout(() => {
         resetChoices();
+        setIsIncrementPointShown(false);
       }, 1500);
     }
   }, [pickedCard, computerPickedCard]);
 
   useEffect(() => {
-    console.log("points: " + points);
-    console.log("increment: " + incrementPoint);
-  }, [points, lives]);
-
-  useEffect(() => {
-    console.log("lives: " + lives);
     if (lives <= 0) {
-      console.log("Game Over");
-      //TODO() : update live score to supabase
-      navigate("home"); //this is just temporary
+      setResult("Game Over\n" + points + " Points");
+      updateScoreToDatabase();
+      setTimeout(() => {
+        navigate("home");
+      }, 2000);
     }
   }, [lives]);
 
+  async function updateScoreToDatabase() {
+    const user = await supabase.auth.getUser();
+    const { data, error } = await supabase
+      .from("score")
+      .update({ score: points })
+      .eq('id', user.data.user.id)
+      .select();
+
+    if (error) {
+      throw error;
+    }
+  }
+
   function handleWinner(): string {
     if (computer == player) {
+      setStreak(0);
       return "Draw";
     }
     if (
@@ -124,13 +135,14 @@ const PlayScreen = ({ navigation: { navigate } }) => {
       setIsIncrementPointShown(false);
       setLives((l) => l - 1);
       setStreak(0);
-      return "Comp";
+      return "Comp Win";
     }
   }
 
   function resetChoices() {
     setPlayer(0);
     setComputer(0);
+    setIsResultShown(false);
     setIsPickedCardHidden(true);
     setIsComputerPickedCardHidden(true);
   }
@@ -141,6 +153,7 @@ const PlayScreen = ({ navigation: { navigate } }) => {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
+        marginVertical: 8,
       }}
     >
       <View style={{ flex: 1, flexDirection: "row", marginTop: 24 }}>
@@ -158,6 +171,9 @@ const PlayScreen = ({ navigation: { navigate } }) => {
         <View style={[styles.indicator, styles.playerHealth]}>
           {Array.from({ length: lives }).map((_, index) => (
             <Health key={index} iconName={"heart"} />
+          ))}
+          {Array.from({ length: 3 - lives }).map((_, index) => (
+            <Health key={index} iconName={"heart-outline"} />
           ))}
         </View>
         {streak >= 3 ? (
@@ -177,7 +193,7 @@ const PlayScreen = ({ navigation: { navigate } }) => {
           <TotalPoints points={points} />
         </View>
       </View>
-      <View style={{ flex: 1, flexDirection: "row" }}>
+      <View style={{ flex: 1, flexDirection: "row", marginBottom: 24 }}>
         <Pressable
           style={{ flex: 1 }}
           onPress={() => {
@@ -235,8 +251,7 @@ const PlayScreen = ({ navigation: { navigate } }) => {
           </View>
         </>
       )}
-
-      {/* <Countdown countdown={5} /> */}
+      {isResultShown ? <TurnResult result={result} /> : <></>}
     </View>
   );
 };

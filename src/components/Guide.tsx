@@ -16,7 +16,7 @@ const Guide = ({ image, title, content, index }) => {
         transition={1000}
       />
       <Text style={styles.title}>{title}</Text>
-      <ScrollView style={styles.scrollView}>
+      {/* <ScrollView style={styles.scrollView}> */}
         {content.map((guide, i) => (
           <GuideContentItem
             key={i}
@@ -24,7 +24,7 @@ const Guide = ({ image, title, content, index }) => {
             index={index != null ? i + 1 : null}
           />
         ))}
-      </ScrollView>
+      {/* </ScrollView> */}
     </View>
   );
 };
@@ -42,10 +42,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     width: width * 0.8, // Set width to 80% of the screen width for better centering
     alignSelf: 'center', // Centers the card
-    height: 400, // Fixed height to constrain content
+    // height: 400, // Fixed height to constrain content
+    minHeight: 600
   },
   image: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 16,
