@@ -103,7 +103,7 @@ const PlayScreen = ({ navigation: { navigate } }) => {
     const { data, error } = await supabase
       .from("score")
       .update({ score: points })
-      .eq('id', user.data.user.id)
+      .eq('user_id', user.data.user.id)
       .select();
 
     if (error) {
