@@ -18,10 +18,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#EFFBFC"
-      }
+      },
+      "package": "com.ahimsarijalu.BagerApp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a98ecf17-27d3-434e-81cc-acd688ada9f9"
+      }
     }
   }
 }

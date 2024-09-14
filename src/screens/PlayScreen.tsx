@@ -54,8 +54,7 @@ const PlayScreen = ({ navigation: { navigate } }) => {
 
   function handlePlayerPick(playerPicked: number) {
     setPlayer(playerPicked);
-    // const computer = Math.floor(Math.random() * 3) + 1;
-    const computer = 1
+    const computer = Math.floor(Math.random() * 3) + 1;
     setComputer(computer);
   }
 
