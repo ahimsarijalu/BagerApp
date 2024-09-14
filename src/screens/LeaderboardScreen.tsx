@@ -29,8 +29,6 @@ const LeaderboardScreen = ({ navigation: { navigate } }) => {
       console.error(error);
       return;
     }
-
-    console.log(scores);
     setLeaderboard(scores);
   };
 
