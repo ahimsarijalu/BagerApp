@@ -9,24 +9,28 @@ import {
   Platform,
   ScrollView,
   Dimensions,
-  Keyboard
+  Keyboard,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 const { width, height } = Dimensions.get("window");
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { supabase } from "@/utils/supabase";
 
 const LoginScreen = ({ navigation: { navigate } }) => {
   const translateY = useSharedValue(0);
   const [tapped, setTapped] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const animatedStyles = useAnimatedStyle(() => ({
     transform: [
       {
@@ -74,8 +78,14 @@ const LoginScreen = ({ navigation: { navigate } }) => {
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.header}>
-          <Image source={require("assets/image_hand.png")} style={styles.topImage} />
-          <Image source={require("assets/bagerlogin.png")} style={styles.bagerImage} />
+          <Image
+            source={require("assets/image_hand.png")}
+            style={styles.topImage}
+          />
+          <Image
+            source={require("assets/bagerlogin.png")}
+            style={styles.bagerImage}
+          />
         </View>
 
         <Animated.View style={[styles.formContainer, animatedStyles]}>
@@ -116,7 +126,7 @@ const LoginScreen = ({ navigation: { navigate } }) => {
 
           {error && <Text style={styles.errorText}>{error}</Text>}
 
-          <View style={styles.googleContainer}>
+          {/* <View style={styles.googleContainer}>
             <TouchableOpacity
               onPress={() => {
                 alert("Google Auth");
@@ -127,9 +137,9 @@ const LoginScreen = ({ navigation: { navigate } }) => {
                 source={require("assets/image_29.png")}
               />
             </TouchableOpacity>
-          </View>
+          </View> */}
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.button}
             onPress={handleLogin}
             disabled={loading}
@@ -143,7 +153,7 @@ const LoginScreen = ({ navigation: { navigate } }) => {
             Don't Have an Account?{" "}
             <Text
               style={[styles.registerText]}
-              onPress={() => navigate('signup')}
+              onPress={() => navigate("signup")}
             >
               Register Now
             </Text>
@@ -251,8 +261,8 @@ const styles = StyleSheet.create({
     color: "#44c9e0",
   },
   errorText: {
-    color: 'red',
-    textAlign: 'center',
+    color: "red",
+    textAlign: "center",
     marginBottom: 10,
   },
 });

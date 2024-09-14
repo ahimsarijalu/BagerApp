@@ -1,5 +1,12 @@
-import React, {useState, useEffect} from "react";
-import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import { Avatar, Button } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Guide from "@/components/Guide";
@@ -45,43 +52,42 @@ const { width } = Dimensions.get("window");
 
 const HomeScreen = ({ navigation: { navigate } }) => {
   const [userImage, setUserImage] = useState(null);
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');  
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(true);
-  const [score, setScore] = useState('');
+  const [score, setScore] = useState(0);
 
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-        try {
-            const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-            
-            
-            const user = session?.user;
-            
-            if (user) {
-                console.log('User ID:', user.id);
+  useEffect(() => {fetchUserProfile()}, []);
 
-                // Fetch user details from the auth system
-                const { data, error } = await supabase.auth.getUser();
+  const fetchUserProfile = async () => {
+    try {
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
 
-                if (error) {
-                    console.error('Error fetching user data:', error.message);
-                } else {
-                    setUsername(data.user?.user_metadata?.username || 'No username');
-                    setEmail(data.user?.email || 'No email');
-                    setUserImage(data.user?.user_metadata?.userImage || 'No userImage');
-                    setScore(data.user?.user_metadata?.score || '0');
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching user profile:', error.message);
-        } finally {
-            setLoading(false);
+      const user = session?.user;
+
+      if (user) {
+        setUsername(user.user_metadata.username || "No username");
+        setEmail(user.email || "No email");
+        setUserImage(user.user_metadata?.userImage || "No userImage");
+        let { data: scoreData, error: scoreError } = await supabase
+          .from("score")
+          .select("score")
+          .eq("user_id", user.id);
+
+        if (scoreError) {
+          console.error("Error fetching score data:", scoreError.message);
         }
-    };
-
-    fetchUserProfile();
-}, []);  
+        setScore(scoreData.at(0).score);
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   function goToPlayScreen() {
     navigate("playScreen");
@@ -96,11 +102,20 @@ const HomeScreen = ({ navigation: { navigate } }) => {
       <View style={styles.header}>
         <View style={styles.profile}>
           <TouchableOpacity onPress={() => navigate("profile")}>
-            <Avatar.Image size={48} source={userImage ? {uri: userImage} : require("assets/profilePic.png")} />
+            <Avatar.Image
+              size={48}
+              source={
+                userImage
+                  ? { uri: userImage }
+                  : require("assets/profilePic.png")
+              }
+            />
           </TouchableOpacity>
           <View style={styles.profileInfo}>
-            <Text style={styles.name}>{username ? username : "Prima Gaul"}</Text>
-            <Text style={styles.points}>{score ? score : "Prima Gaul"} points</Text>
+            <Text style={styles.name}>
+              {username ? username : "Prima Gaul"}
+            </Text>
+            <Text style={styles.points}>{score} points</Text>
           </View>
         </View>
         <TouchableOpacity onPress={() => navigate("leaderboard")}>
@@ -118,16 +133,30 @@ const HomeScreen = ({ navigation: { navigate } }) => {
           prevPos: "left",
           nextPos: "right",
           nextTitle: ">",
-          nextTitleStyle: { color: colors.totalPoints, fontSize: 24, fontWeight: "bold" },
+          nextTitleStyle: {
+            color: colors.totalPoints,
+            fontSize: 24,
+            fontWeight: "bold",
+          },
           prevTitle: "<",
-          prevTitleStyle: { color: colors.totalPoints, fontSize: 24, fontWeight: "bold" },
+          prevTitleStyle: {
+            color: colors.totalPoints,
+            fontSize: 24,
+            fontWeight: "bold",
+          },
         }}
       >
         {guides.map((guide, index) =>
           index === 0 ? (
             <GuideCover key={index} image={guide.image} title={guide.title} />
           ) : (
-            <Guide key={index} image={guide.image} title={guide.title} content={guide.content} index={undefined} />
+            <Guide
+              key={index}
+              image={guide.image}
+              title={guide.title}
+              content={guide.content}
+              index={undefined}
+            />
           )
         )}
       </Swiper>
@@ -139,7 +168,9 @@ const HomeScreen = ({ navigation: { navigate } }) => {
           contentStyle={styles.playButtonContent}
           labelStyle={styles.buttonText}
           onPress={goToPlayScreen}
-          icon={() => <Ionicons name="play" size={24} color={colors.totalPoints} />}
+          icon={() => (
+            <Ionicons name="play" size={24} color={colors.totalPoints} />
+          )}
         >
           Start Game
         </Button>
@@ -168,7 +199,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 20,
     marginHorizontal: 16,
-    marginBottom: 16
+    marginBottom: 16,
   },
   profile: {
     flexDirection: "row",

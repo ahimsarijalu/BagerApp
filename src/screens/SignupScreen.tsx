@@ -69,7 +69,7 @@ const SignupScreen = ({ navigation: { navigate } }) => {
       const randomUserImage = results[0].picture.large; // Get portrait image
 
       // Proceed with signup and use the random image
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -89,11 +89,17 @@ const SignupScreen = ({ navigation: { navigate } }) => {
       Alert.alert("Signup successful", successMessage); // For mobile
       if (typeof window !== "undefined") alert(successMessage); // For web
 
-      const { error: insertError } = await supabase
-        .from("score")
-        .insert({ score: 0 });
-      if (insertError) {
-        console.log(insertError);
+      if (data && data.user) {
+        const { error: insertError } = await supabase.from("score").insert([
+          {
+            user_id: data.user.id,
+            score: 0,
+            image: randomUserImage,
+            username: username
+          },
+        ]);
+
+        if (insertError) throw insertError;
       }
 
       navigate("login");

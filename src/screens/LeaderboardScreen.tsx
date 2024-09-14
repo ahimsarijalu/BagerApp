@@ -1,42 +1,68 @@
-import React, { useEffect } from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchLeaderboard } from '@/redux/leaderboardSlice';
-import { RootState } from '../redux/store';
-import { Ionicons } from '@expo/vector-icons';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { LinearGradient } from 'expo-linear-gradient';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchLeaderboard } from "@/redux/leaderboardSlice";
+import { RootState } from "../redux/store";
+import { Ionicons } from "@expo/vector-icons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { LinearGradient } from "expo-linear-gradient";
+import { supabase } from "@/utils/supabase";
 
 const LeaderboardScreen = ({ navigation: { navigate } }) => {
   const dispatch = useDispatch();
-  const leaderboard = useSelector((state: RootState) => state.leaderboard);
+  const [leaderboard, setLeaderboard] = useState([]);
 
   useEffect(() => {
-    dispatch(fetchLeaderboard());
-  }, [dispatch]);
+    getLeaderboard();
+  }, []);
 
-  const top3Leaderboard = leaderboard.length >= 3 
-  ? [leaderboard[1], leaderboard[0], leaderboard[2]] 
-  : [];
+  const getLeaderboard = async () => {
+    let { data: score, error } = await supabase
+      .from("score")
+      .select("*")
+      .order("score", { ascending: false })
+      .limit(10);
+
+    if (error) throw error;
+    console.log(score)
+    setLeaderboard(score)    
+  };
+
+  const top3Leaderboard =
+    leaderboard.length >= 3
+      ? [leaderboard[1], leaderboard[0], leaderboard[2]]
+      : [];
   const remainingLeaderboard = leaderboard.slice(3, 10); // Remaining 4-10 users
 
   return (
     <View style={styles.container}>
       {/* Back Button */}
       <View style={styles.backButton}>
-          <TouchableOpacity onPress={() => { navigate('home') }}>
-              <Image source={require('assets/backbuttonprofilescreen.png')} />
-          </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            navigate("home");
+          }}
+        >
+          <Image source={require("assets/backbuttonprofilescreen.png")} />
+        </TouchableOpacity>
       </View>
 
       {/* User Rank Banner */}
-      <View style={styles.userRankContainer}>
+      {/* <View style={styles.userRankContainer}>
         <Text style={styles.userRankText}>You're ranked #209!</Text>
-        <Text style={styles.userPoints}>40 Points</Text>
+        <Text style={styles.userPoints}>{}</Text>
         <Text style={styles.userMessage}>
           Play again and climb your way to the top!
         </Text>
-      </View>
+      </View> */}
 
       <ScrollView contentContainerStyle={styles.scrollView}>
         {/* Top 3 Leaderboard */}
@@ -44,16 +70,23 @@ const LeaderboardScreen = ({ navigation: { navigate } }) => {
           {top3Leaderboard.map((user, index) => {
             // Adjust podium heights: 1st in the middle is highest, 2nd on left, 3rd on right
             const podiumHeight = index === 1 ? 220 : index === 0 ? 180 : 140; // Left podium (2nd), Middle podium (1st), Right podium (3rd)
-            const rankColor = index === 1 ? 'gold' : index === 0 ? 'silver' : '#CD7F32';
+            const rankColor =
+              index === 1 ? "gold" : index === 0 ? "silver" : "#CD7F32";
 
             return (
               <LinearGradient
                 key={index}
-                colors={['#5BD1DE', '#5BD1DE', 'white']}
+                colors={["#5BD1DE", "#5BD1DE", "white"]}
                 locations={[0, 0.7, 1]}
                 style={[styles.top3ContainerUpper, { height: podiumHeight }]}
               >
-                <View style={{ alignItems: 'center', position: 'absolute', top: -90 }}>
+                <View
+                  style={{
+                    alignItems: "center",
+                    position: "absolute",
+                    top: -90,
+                  }}
+                >
                   <MaterialCommunityIcons
                     name="crown"
                     size={30}
@@ -79,6 +112,7 @@ const LeaderboardScreen = ({ navigation: { navigate } }) => {
 
         {/* Remaining Leaderboard */}
         {remainingLeaderboard.map((user, index) => (
+          
           <View key={index + 3} style={styles.leaderboardItem}>
             <View style={styles.rankContainer}>
               <Text style={styles.rank}>{index + 4}</Text>
@@ -86,7 +120,7 @@ const LeaderboardScreen = ({ navigation: { navigate } }) => {
             <Image source={{ uri: user.image }} style={styles.avatar} />
             <View style={styles.info}>
               <Text style={styles.name}>{user.name}</Text>
-              <Text style={styles.points}>{user.points} Points</Text>
+              <Text style={styles.points}>{user.score} Points</Text>
             </View>
           </View>
         ))}
@@ -98,15 +132,15 @@ const LeaderboardScreen = ({ navigation: { navigate } }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EFFBFC',
+    backgroundColor: "#EFFBFC",
     paddingHorizontal: 10, // Responsive padding for mobile
   },
   scrollView: {
     paddingBottom: 20,
   },
   userRankContainer: {
-    alignItems: 'center',
-    backgroundColor: '#5BD1DE',
+    alignItems: "center",
+    backgroundColor: "#5BD1DE",
     paddingVertical: 20,
     marginBottom: 20,
     borderRadius: 20,
@@ -116,37 +150,37 @@ const styles = StyleSheet.create({
   },
   userRankText: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white',
+    fontWeight: "bold",
+    color: "white",
   },
   userPoints: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#ffffff',
+    fontWeight: "bold",
+    color: "#ffffff",
     marginTop: 5,
   },
   userMessage: {
     fontSize: 14,
-    color: 'white',
+    color: "white",
     marginTop: 5,
-    textAlign: 'center', // Ensure readability on all screens
+    textAlign: "center", // Ensure readability on all screens
   },
   top3Container: {
-    flexDirection: 'row',
-    justifyContent: 'space-around', // Ensure podiums are spaced evenly
-    alignItems: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "space-around", // Ensure podiums are spaced evenly
+    alignItems: "flex-end",
     height: 250,
     marginTop: 50,
   },
   top3ContainerUpper: {
-    width: '28%',
-    backgroundColor: '#f0f0f0',
+    width: "28%",
+    backgroundColor: "#f0f0f0",
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
     paddingBottom: 20,
-    alignItems: 'center',
-    position: 'relative',
+    alignItems: "center",
+    position: "relative",
   },
   topAvatar: {
     width: 60,
@@ -157,45 +191,45 @@ const styles = StyleSheet.create({
   },
   topName: {
     fontSize: 14,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginVertical: 3,
   },
   topPoints: {
     fontSize: 14,
-    color: '#ffffff',
-    textAlign: 'center',
-    marginBottom: 50
+    color: "#ffffff",
+    textAlign: "center",
+    marginBottom: 50,
   },
   topRank: {
     fontSize: 50,
-    fontWeight: 'bold',
-    position: 'absolute',
-    color: 'white',
-    marginTop: 20
+    fontWeight: "bold",
+    position: "absolute",
+    color: "white",
+    marginTop: 20,
   },
   leaderboardItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
     borderRadius: 10,
     padding: 15,
     marginBottom: 10,
     elevation: 3,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
   },
   rankContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     width: 40,
   },
   rank: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#555',
+    fontWeight: "bold",
+    color: "#555",
   },
   avatar: {
     width: 50,
@@ -208,17 +242,17 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   points: {
     fontSize: 14,
-    color: '#888',
+    color: "#888",
   },
   backButton: {
     marginTop: 45,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     marginLeft: 20,
-},  
+  },
 });
 
 export default LeaderboardScreen;
