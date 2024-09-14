@@ -14,6 +14,7 @@ import GuideCover from "@/components/GuideCover";
 import Swiper from "react-native-web-swiper";
 import colors from "@/theme/Colors";
 import { supabase } from "@/utils/supabase";
+import { useIsFocused } from "@react-navigation/native";
 
 const guides = [
   {
@@ -57,7 +58,13 @@ const HomeScreen = ({ navigation: { navigate } }) => {
   const [loading, setLoading] = useState(true);
   const [score, setScore] = useState(0);
 
-  useEffect(() => {fetchUserProfile()}, []);
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (isFocused) {
+      fetchUserProfile();
+    }
+  }, [isFocused]);
 
   const fetchUserProfile = async () => {
     try {

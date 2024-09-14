@@ -54,7 +54,8 @@ const PlayScreen = ({ navigation: { navigate } }) => {
 
   function handlePlayerPick(playerPicked: number) {
     setPlayer(playerPicked);
-    const computer = Math.floor(Math.random() * 3) + 1;
+    // const computer = Math.floor(Math.random() * 3) + 1;
+    const computer = 1
     setComputer(computer);
   }
 
@@ -91,6 +92,7 @@ const PlayScreen = ({ navigation: { navigate } }) => {
   useEffect(() => {
     if (lives <= 0) {
       setResult("Game Over\n" + points + " Points");
+
       updateScoreToDatabase();
       setTimeout(() => {
         navigate("home");
@@ -99,15 +101,23 @@ const PlayScreen = ({ navigation: { navigate } }) => {
   }, [lives]);
 
   async function updateScoreToDatabase() {
-    const user = await supabase.auth.getUser();
-    const { data, error } = await supabase
-      .from("score")
-      .update({ score: points })
-      .eq('user_id', user.data.user.id)
-      .select();
+    const user = (await supabase.auth.getUser()).data.user;
 
-    if (error) {
-      throw error;
+    const { data: score, error: scoreError } = await supabase
+      .from("score")
+      .select("score")
+      .eq("user_id", user.id);
+
+    if (score.at(0).score <= points) {
+      const { error } = await supabase
+        .from("score")
+        .update({ score: points })
+        .eq("user_id", user.id)
+        .select();
+
+      if (error) {
+        throw error;
+      }
     }
   }
 
@@ -126,6 +136,7 @@ const PlayScreen = ({ navigation: { navigate } }) => {
       let increment = 10 * streak;
       if (streak >= 3) {
         setPoints((p) => p + increment);
+        setIncrementPoint(increment)
       } else {
         setPoints((p) => p + 10);
         streak > 0 ? setIncrementPoint(increment) : setIncrementPoint(10);
