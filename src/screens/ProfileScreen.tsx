@@ -269,12 +269,12 @@ const ProfileScreen = ({ navigation: { navigate } }) => {
             }
             style={styles.profileImage}
           />
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.changePhotoButton}
             onPress={handleImageSelection}
           >
             <Image source={require("assets/buttonfotoprofile.png")} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         <View style={styles.inputContainer}>
